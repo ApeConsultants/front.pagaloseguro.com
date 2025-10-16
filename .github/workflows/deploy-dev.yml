@@ -1,0 +1,34 @@
+name: Deploy build to Dev
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: npm install
+        run: |
+          npm install
+
+      - name: Build project
+        run: |
+          npm run build
+
+      - name: Upload build via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: 195.35.10.186
+          port: 21
+          protocol: ftp
+          username: ${{ secrets.FTP_USER_DEV }}
+          password: ${{ secrets.FTP_PASS_DEV }}
+          local-dir: ./dist/front.pagalseguro.com/browser/
+          server-dir: /
