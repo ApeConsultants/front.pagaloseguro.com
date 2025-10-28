@@ -1,2 +1,29 @@
-<h1>Pagalo seguro</h1>
-<img src="assets/logo/logo.svg" alt="">
+<div class="homemaster">
+    <app-home-nav [ScrollPage]="ScrollPage"></app-home-nav>
+    <section class="hero">
+        <div class="hero-content">
+            <img src="assets/logo/Logo.svg" alt="PagaloSeguro Logo" class="hero-logo" />
+            <h1 style="display: none;">Págalo Seguro</h1>
+            <p class="hero-description">
+                En Págalo Seguro, cada semana que ahorras te acerca a un rendimiento del 10% anual. <br>
+                Diseñado para trabajadores formales e informales que buscan disciplina financiera y resultados confiables
+            </p>
+            <a [routerLink]="'/login'" class="ButtonConfig">Comienza tu ahorro</a>
+        </div>
+    </section>
+    <section class="about">
+        <div class="about-content">
+            <img src="assets/img/ahorro.svg" alt="Consultoría" class="about-image" />
+            <div class="about-info">
+                <h3>¿Quiénes somos?</h3>
+                <p>
+                    <b>Págalo Seguro </b>es una plataforma de ahorro semanal que impulsa
+                    la constancia financiera entre trabajadores formales e informales. Nacimos como una iniciativa entre personas de confianza,
+                    con el objetivo de fomentar el hábito del ahorro y ofrecer un crecimiento claro y transparente del capital. Creemos en la disciplina,
+                    la cercanía y la confianza como pilares para construir un futuro financiero más sólido
+                </p>
+            </div>
+        </div>
+    </section>
+    <app-home-footer></app-home-footer>
+</div>
