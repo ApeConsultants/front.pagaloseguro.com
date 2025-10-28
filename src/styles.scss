@@ -1,5 +1,47 @@
-/* You can add global styles to this file, and also import other style files */
 $verde: #54a556;
 $verde-secondary:#38dc2b;
 $amarillo: #ffce03;
 $contraste: #f4a1b1;
+
+:root {
+    --verde: #{$verde};
+    --verde-secondary: #{$verde-secondary};
+    --amarillo: #{$amarillo};
+    --contraste: #{$contraste};
+    --primary-color: #{$verde};
+    --secondary-color: #{$amarillo};
+}
+
+
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: #fff;
+}
+.ScrollConfig {
+    scroll-behavior: smooth;
+    &::-webkit-scrollbar {
+        background: none;
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: $verde;
+        border-radius: 1rem;
+    }
+}
+.ButtonConfig {
+    transition: 300ms ease;
+    &:hover {
+        cursor: pointer;
+        opacity: 0.8;
+        transform: scale(1.02);
+    }
+}

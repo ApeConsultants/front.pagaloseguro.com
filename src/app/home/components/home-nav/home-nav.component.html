@@ -1,0 +1,10 @@
+<nav [ngClass]="{'active': ScrollPage > 0}">
+    <div class="icon">
+        <img src="assets/logo/Logo.svg" alt="icon">
+    </div>
+    <ul>
+        <li><a [routerLink]="'/'" class="ButtonConfig">Home</a></li>
+        <li><a [routerLink]="'/login'" class="ButtonConfig loginbtn">Ingresar</a></li>
+    </ul>
+</nav>
+<div class="line" [ngClass]="{'lineactive': ScrollPage > 0}"></div>
