@@ -1,0 +1,145 @@
+<div class="form-container">
+  <h2>{{ isEditMode ? 'Editar Usuario' : 'Crear Nuevo Usuario' }}</h2>
+  <a [routerLink]="['/pase/usuarios']" class="btn-back">&larr; Volver a la lista</a>
+
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    
+    <div class="form-row">
+      <div class="form-group">
+        <label for="nombre">Nombre(s)</label>
+        <input id="nombre" type="text" formControlName="nombre">
+        <div *ngIf="userForm.get('nombre')?.touched && userForm.get('nombre')?.errors" class="error-message">
+          <span *ngIf="userForm.get('nombre')?.errors?.['required']">El nombre es obligatorio.</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="apellidos">Apellidos</label>
+        <input id="apellidos" type="text" formControlName="apellidos">
+        <div *ngIf="userForm.get('apellidos')?.touched && userForm.get('apellidos')?.errors" class="error-message">
+          <span *ngIf="userForm.get('apellidos')?.errors?.['required']">El apellido es obligatorio.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="correo">Correo Electrónico</label>
+        <input id="correo" type="email" formControlName="correo">
+        <div *ngIf="userForm.get('correo')?.touched && userForm.get('correo')?.errors" class="error-message">
+          <span *ngIf="userForm.get('correo')?.errors?.['required']">El correo es obligatorio.</span>
+          <span *ngIf="userForm.get('correo')?.errors?.['email']">Formato de correo inválido.</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <span *ngIf="isEditMode" class="form-hint">(Dejar vacío para no cambiar)</span>
+        <input id="password" type="password" formControlName="password">
+        <div *ngIf="userForm.get('password')?.touched && userForm.get('password')?.errors" class="error-message">
+          <span *ngIf="userForm.get('password')?.errors?.['required']">La contraseña es obligatoria.</span>
+          <span *ngIf="userForm.get('password')?.errors?.['minlength']">Debe tener al menos 8 caracteres.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+<div class="form-group">
+      <label for="tipoUsuario">Tipo de Usuario</label>
+      <select id="tipoUsuario" formControlName="tipoUsuario">
+        <option [ngValue]="null" disabled>Seleccione un tipo...</option>
+        
+        <ng-container *ngIf="tiposUsuario$ | async as response">
+          <option *ngFor="let tipo of response.data" [value]="tipo.id_tipo_usuario">
+            {{ tipo.nombre | titlecase }}
+          </option>
+        </ng-container>
+      </select>
+      <div *ngIf="userForm.get('tipoUsuario')?.touched && userForm.get('tipoUsuario')?.errors" class="error-message">
+        <span *ngIf="userForm.get('tipoUsuario')?.errors?.['required']">El tipo es obligatorio.</span>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="genero">Género</label>
+      <select id="genero" formControlName="genero">
+        <option value="M">Masculino</option>
+        <option value="F">Femenino</option>
+        <option value="O">Otro</option>
+      </select>
+    </div>
+  </div>
+
+  <hr>
+  <h3>Dirección</h3>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="cp">C.P.</label>
+      <input id="cp" type="text" formControlName="cp" maxlength="5">
+    </div>
+
+    <div class="form-group">
+      <label for="colonia">Colonia</label>
+      <span *ngIf="isLoadingColonias" class="form-hint">Buscando...</span>
+      <select id="colonia" formControlName="colonia">
+        <option [ngValue]="null" disabled>Seleccione una colonia...</option>
+        <ng-container *ngIf="colonias$ | async as response">
+          <option *ngFor="let c of response.data" [value]="c.colonia">
+            {{ c.colonia }}
+          </option>
+        </ng-container>
+      </select>
+      <div *ngIf="userForm.get('colonia')?.touched && userForm.get('colonia')?.errors" class="error-message">
+        <span *ngIf="userForm.get('colonia')?.errors?.['required']">La colonia es obligatoria.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="municipio">Municipio</label>
+      <input id="municipio" type="text" formControlName="municipio" readonly>
+    </div>
+    <div class="form-group">
+      <label for="estado">Estado</label>
+      <input id="estado" type="text" formControlName="estado" readonly>
+    </div>
+  </div>
+
+    <div class="form-group">
+      <label for="direccion">Dirección</label>
+      <input id="direccion" type="text" formControlName="direccion">
+    </div>
+
+    <hr>
+    <h3>Información Adicional</h3>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="telefono">Teléfono</label>
+        <input id="telefono" type="tel" formControlName="telefono">
+      </div>
+      <div class="form-group">
+        <label for="rfc">RFC</label>
+        <input id="rfc" type="text" formControlName="rfc">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="fechaNacimiento">Fecha Nacimiento</label>
+        <input id="fechaNacimiento" type="date" formControlName="fechaNacimiento">
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="api-error-message">
+      {{ errorMessage }}
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="isLoading" class="btn btn-primary">
+        {{ isLoading ? 'Guardando...' : (isEditMode ? 'Actualizar Usuario' : 'Crear Usuario') }}
+      </button>
+    </div>
+
+  </form>
+</div>

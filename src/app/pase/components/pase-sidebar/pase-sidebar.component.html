@@ -1,0 +1,26 @@
+<div class="sidebar-container">
+  <div class="logo-container">
+    <img [src]="logoSrc" alt="PagaloSeguro Logo">
+  </div>
+
+  <nav class="nav-menu">
+    <ul>
+      <li>
+        <a 
+          routerLink="/pase" 
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{exact: true}">
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a 
+          routerLink="/pase/usuarios" 
+          routerLinkActive="active-link">
+          <span>Usuarios</span>
+        </a>
+      </li>
+      
+      </ul>
+  </nav>
+</div>

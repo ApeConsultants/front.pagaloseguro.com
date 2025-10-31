@@ -1,2 +1,14 @@
-<p>pase-layout works!</p>
-<router-outlet/>
+<div class="pase-layout-container">
+  
+  <app-pase-sidebar class="pase-sidebar"></app-pase-sidebar>
+
+  <main class="pase-main-content">
+    
+    <app-pase-header class="pase-header"></app-pase-header>
+
+    <div class="pase-page-content">
+      <router-outlet></router-outlet>
+    </div>
+
+  </main>
+</div>

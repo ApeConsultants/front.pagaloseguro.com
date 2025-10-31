@@ -1,0 +1,60 @@
+<div class="user-list-container">
+  <header>
+    <h1>Administración de Usuarios</h1>
+    <a *ngIf="canCreate()" [routerLink]="['/pase/usuarios/nuevo']" class="btn btn-primary">
+      + Crear Nuevo Usuario
+    </a>
+  </header>
+
+  <ng-container *ngIf="users$ | async as response; else loadingOrError">
+    
+    <div *ngIf="response.status !== 'success'" class="alert alert-danger">
+      <strong>Error:</strong> {{ response.msg }}
+    </div>
+
+    <ng-container *ngIf="response.status === 'success'">
+      
+      <div *ngIf="!response.data || response.data.length === 0" class="alert alert-info">
+        No se encontraron usuarios registrados.
+      </div>
+
+      <table *ngIf="response.data && response.data.length > 0" class="table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Tipo</th>
+            <th>Activo</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of response.data">
+            <td>{{ user.nombre }} {{ user.apellidos }}</td>
+            <td>{{ user.correo }}</td>
+            <td>
+              <span *ngIf="user.tipo === 1">Admin</span>
+              <span *ngIf="user.tipo === 2">Ejecutivo</span>
+              <span *ngIf="user.tipo === 3">Ahorrador</span>
+            </td>
+            <td>{{ user.activo == 1 ? 'Sí' : 'No' }}</td>
+            <td class="actions">
+              <a *ngIf="canEdit(user.tipo)" [routerLink]="['/pase/usuarios/editar', user.id_usuario]" class="btn btn-secondary">
+                Editar
+              </a>
+              <button *ngIf="canDelete()" (click)="onDelete(user.id_usuario)" class="btn btn-danger">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </ng-container>
+
+  </ng-container>
+
+  <ng-template #loadingOrError>
+    <p>Cargando usuarios...</p>
+    </ng-template>
+
+</div>

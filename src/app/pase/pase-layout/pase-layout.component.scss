@@ -1,0 +1,40 @@
+:host {
+  display: block;
+  height: 100vh;
+}
+
+.pase-layout-container {
+  display: flex;
+  height: 100%;
+}
+
+.pase-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: #1a202c;
+  color: #fff;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+}
+
+.pase-main-content {
+  flex-grow: 1;
+  height: 100vh;
+  overflow-y: auto;
+  margin-left: 260px;
+  display: flex;
+  flex-direction: column;
+}
+
+.pase-header {
+  flex-shrink: 0;
+}
+
+.pase-page-content {
+  padding: 2rem;
+  background-color: #f7f9fc;
+  flex-grow: 1;
+}
