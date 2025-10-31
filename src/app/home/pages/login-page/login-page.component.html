@@ -1,1 +1,31 @@
-<p>login-page</p>
+<div class="login-container">
+  <h2>Iniciar Sesión</h2>
+  <p>Accede a la plataforma Pagalo Seguro.</p>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="correo">Correo Electrónico</label>
+      <input type="email" id="correo" formControlName="correo" placeholder="correo@dominio.com">
+      <div *ngIf="loginForm.get('correo')?.touched && loginForm.get('correo')?.invalid" class="error-message">
+        <span *ngIf="loginForm.get('correo')?.errors?.['required']">El correo es obligatorio.</span>
+        <span *ngIf="loginForm.get('correo')?.errors?.['email']">Formato de correo inválido.</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" formControlName="password" placeholder="Tu contraseña">
+      <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="error-message">
+        <span *ngIf="loginForm.get('password')?.errors?.['required']">La contraseña es obligatoria.</span>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="api-error-message">
+      {{ errorMessage }}
+    </div>
+
+    <button type="submit" [disabled]="isLoading || loginForm.invalid">
+      {{ isLoading ? 'Ingresando...' : 'Ingresar' }}
+    </button>
+  </form>
+</div>
