@@ -38,23 +38,28 @@
               <span *ngIf="user.tipo === 3">Ahorrador</span>
             </td>
             <td>{{ user.activo == 1 ? 'Sí' : 'No' }}</td>
+
             <td class="actions">
-              <a *ngIf="canEdit(user.tipo)" [routerLink]="['/pase/usuarios/editar', user.id_usuario]" class="btn btn-secondary">
-                Editar
-              </a>
-              <button *ngIf="canDelete()" (click)="onDelete(user.id_usuario)" class="btn btn-danger">
-                Eliminar
-              </button>
+              <div class="btns">
+                <a *ngIf="canEdit(user.tipo)"
+                   [routerLink]="['/pase/usuarios/editar', user.id_usuario]"
+                   class="btn btn-secondary">
+                  Editar
+                </a>
+                <button *ngIf="canDelete()"
+                        (click)="onDelete(user.id_usuario)"
+                        class="btn btn-danger">
+                  Eliminar
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
       </table>
     </ng-container>
-
   </ng-container>
 
   <ng-template #loadingOrError>
-    <p>Cargando usuarios...</p>
-    </ng-template>
-
+    <div class="alert alert-info">Cargando usuarios…</div>
+  </ng-template>
 </div>

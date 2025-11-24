@@ -1,0 +1,265 @@
+@use '../../../../styles' as *;
+
+.depositar { padding: 24px; }
+
+.hero { margin-bottom: 16px;
+  h1 { margin: 0 0 6px 0; color: #0f172a; }
+  p  { color: #6b7280; }
+}
+
+.panel { padding: 16px; border-radius: 12px;
+  &.loading { background:#f8fafc; color:#0f172a; }
+  &.error   { background:#fff1f2; color:#be123c; border:1px solid #fecdd3; }
+}
+
+.grid { display:grid; gap:16px; }
+.grid.one-col { grid-template-columns: 1fr; } /* siempre vertical */
+
+.card {
+  background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:16px;
+  box-shadow:0 1px 2px rgba(15,23,42,.04);
+  h3 { margin-top:0; color:#0f172a; }
+  .row { display:flex; justify-content:space-between; margin:8px 0;
+    .label { color:#6b7280; }
+    .value { color:#0f172a; }
+    .money { font-weight:700; }
+  }
+}
+
+/* Card de semanas con scroll */
+.semanas-card .table-scroll{
+  max-height: clamp(320px, 52vh, 640px);
+  overflow: auto;
+  padding-right: 6px;          /* deja espacio para scroll */
+}
+.semanas-card thead th { position: sticky; top: 0; background:#fff; }
+
+/* Chips */
+.chip{ padding:.15rem .5rem; border-radius:999px; font-size:.75rem; background:#e5e7eb; }
+.chip.ok{ background:#dcfce7; color:#166534; }
+.chip.bad{ background:#fee2e2; color:#991b1b; }
+
+/* Botón primario */
+.btn-primary{
+  @extend .ButtonConfig;
+  background:var(--primary-color); color:#fff; border:none; border-radius:10px;
+  padding:12px 14px; font-weight:700; width:100%; margin-bottom:8px;
+}
+
+/* Alertas */
+.alert{ padding:1rem; border-radius:4px; margin:1rem 0; text-align:center; }
+.alert-info{ color:#31708f; background:#d9edf7; border:1px solid #bce8f1; }
+.alert.loading-inline, .alert-info.loading-inline{
+  display:block; margin:2rem auto; padding:.9rem 9rem; border-radius:8px;
+  width:clamp(420px,56vw,940px); max-width:calc(100% - 48px);
+  background:#e7f3fb; border:1px solid #bcdff1; color:#31708f; box-shadow:none;
+}
+
+/* ===== Campo de monto con estilo ===== */
+.amount-field{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;                /* slate-50 */
+  border: 1px solid #e5e7eb;          /* gray-200 */
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-top: .8rem;
+  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+
+
+
+  &.invalid{
+    border-color: #fca5a5;            /* red-300 */
+    box-shadow: 0 0 0 3px rgba(248,113,113,.15);
+  }
+
+  &.valid{
+    border-color: #86efac;            /* green-300 */
+    box-shadow: 0 0 0 3px rgba(34,197,94,.12);
+  }
+}
+
+.amount-field .prefix{
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;             /* indigo-50 */
+  color: #1f2937;                      /* gray-800 */
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.amount-field .amount-input{
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-weight: 600;
+  font-size: clamp(20px, 2.4vw, 28px);
+  letter-spacing: .3px;
+  color: #0f172a;
+}
+
+/* Quitar flechas del input number (Chrome/Edge/Safari) */
+.amount-input::-webkit-outer-spin-button,
+.amount-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+/* Firefox */
+.amount-input[type="number"] { -moz-appearance: textfield; }
+
+/* ===== Alerta de validación ===== */
+.amount-alert{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fff7ed;                 /* orange-50 */
+  color: #9a3412;                       /* orange-800 */
+  font-weight: 600;
+}
+
+.amount-alert i{ font-size: 16px; line-height: 1; }
+
+/* Botón primario */
+.btn-primary:disabled{
+  opacity: .7;
+  cursor: not-allowed;
+  filter: grayscale(.1);
+}
+
+/* ==========================
+   TABLA
+   ========================== */
+
+.semanas-card {
+  display: flex;
+  flex-direction: column;
+  max-height: 100%; 
+}
+
+.table-wrapper {
+  width: 100%;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 1rem;
+  border: 1px solid #f1f5f9;
+  border-radius: 8px;
+
+  /* Scrollbar personalizado */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #f8fafc;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 10px;
+    border: 2px solid #f8fafc;
+  }
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #fff;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #111;
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid #e5e7eb;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  }
+
+  tbody td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+    font-size: 0.95rem;
+    background: #fff;
+    vertical-align: middle;
+  }
+
+  /* Fila vacía */
+  .muted-row {
+    text-align: center;
+    color: #94a3b8;
+    padding: 2rem;
+    font-style: italic;
+  }
+  
+  /* Columna de acciones alineada a la derecha */
+  .action-col {
+    text-align: right;
+  }
+}
+
+/* Botón dentro de la tabla */
+.btn-table {
+  width: auto !important;
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  margin: 0;
+  border-radius: 8px;
+}
+
+/* Chips */
+.chip {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  
+  &.ok { background: #dcfce7; color: #166534; }
+  &.bad { background: #fee2e2; color: #991b1b; }
+}
+
+/* Alerta de suspensión (Notice) */
+.notice.warn {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #9a3412;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.checkbox-accept {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #4b5563;
+
+  input[type='checkbox'] {
+    margin-top: 2px;
+  }
+
+  span {
+    line-height: 1.4;
+
+    a {
+      color: var(--primary-color);
+      font-weight: 600;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+    }
+  }
+}

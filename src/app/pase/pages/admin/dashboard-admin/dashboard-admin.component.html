@@ -1,0 +1,249 @@
+<section class="dashboard-admin">
+  <!-- Loader con diseño global -->
+  <div *ngIf="loading" class="alert alert-info loading-inline">
+    Cargando dashboard…
+  </div>
+
+  <div *ngIf="!loading && error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error" class="dash-grid">
+    <!-- KPIs -->
+    <section class="kpis">
+      <div class="kpi">
+        <span class="lbl">Ciclos activos</span>
+        <b>{{ kpis.ciclosActivos }}</b>
+      </div>
+      <div class="kpi">
+        <span class="lbl">Usuarios (total)</span>
+        <b>{{ kpis.usuariosTotal }}</b>
+      </div>
+      <div class="kpi">
+        <span class="lbl">Recaudación últimos 7 días</span>
+        <b>${{ kpis.recaudacionSemana | number: '1.0-0' }}</b>
+      </div>
+      <div class="kpi">
+        <span class="lbl">Moras (abonos con asunto)</span>
+        <b>{{ kpis.moras }}</b>
+      </div>
+    </section>
+
+    <!-- Gráfica estados abonos -->
+    <article class="card card-chart">
+      <header>
+        <h3>Estados de abonos</h3>
+        <p class="muted">Distribución de abonos por estado.</p>
+      </header>
+      <br>
+
+      <div class="chart-bar" *ngIf="statusChart.length">
+        <div class="chart-layout">
+          <!-- Eje Y -->
+          <div class="chart-y">
+            <div class="chart-y-inner">
+              <span class="axis-y-label">Porcentaje</span>
+              <div class="chart-y-ticks">
+                <div class="y-tick" *ngFor="let t of yTicks">
+                  {{ t }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          <!-- Barras + eje X -->
+          <div class="chart-main">
+            <div class="chart-bar__bars">
+              <div
+                class="bar"
+                *ngFor="let s of statusChart"
+                [ngClass]="'status-' + s.key.toLowerCase()"
+                [style.height.%]="s.percent || 2"
+                (click)="onBarClick(s)"
+              >
+                <div class="bar__popup" *ngIf="selectedStatusKey === s.key">
+                  {{ s.percent }}%
+                </div>
+                <span class="bar__value">{{ s.count }}</span>
+              </div>
+            </div>
+
+            <!-- Nombres de estados (eje X) -->
+            <div class="chart-bar__xlabels">
+              <div class="xlabel" *ngFor="let s of statusChart">
+                {{ s.label }}
+              </div>
+            </div>
+
+            <div class="axis-x-label">Estado</div>
+          </div>
+        </div>
+
+        <!-- Leyenda -->
+        <div class="chart-bar__legend">
+          <div class="leg-item" *ngFor="let s of statusChart">
+            <div class="leg-left">
+              <span
+                class="dot"
+                [ngClass]="'status-' + s.key.toLowerCase()"
+              ></span>
+              <span class="name">{{ s.label }}</span>
+            </div>
+            <span class="percent">{{ s.percent }}%</span>
+          </div>
+        </div>
+      </div>
+
+      <p *ngIf="!statusChart.length" class="muted">
+        Sin abonos registrados.
+      </p>
+    </article>
+
+    <!-- Top Ahorradores -->
+    <article class="card">
+      <h3>Top ahorradores (por monto conciliado)</h3>
+
+      <!-- Filtros -->
+      <div class="top-filters">
+        <div class="filter-group">
+          <label>Seleccionar ciclo</label>
+          <select (change)="onCicloChange($any($event.target).value)">
+            <option value="todos">Todos</option>
+            <option *ngFor="let c of ciclosLista" [value]="c.id">
+              {{ c.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Usuarios</label>
+          <div class="toggle-group">
+            <button
+              type="button"
+              [class.active]="usuarioFiltro === 'activos'"
+              (click)="onUsuarioFiltroChange('activos')"
+            >
+              Activos
+            </button>
+            <button
+              type="button"
+              [class.active]="usuarioFiltro === 'todos'"
+              (click)="onUsuarioFiltroChange('todos')"
+            >
+              Todos
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ol class="top-list">
+        <li *ngFor="let t of topAhorradores; index as i" class="top-item">
+          <span class="top-rank">#{{ i + 1 }}</span>
+          <div class="top-chip">
+            <span class="name">{{ t.nombre }}</span>
+            <span class="value">${{ t.monto | number: '1.2-2' }}</span>
+          </div>
+        </li>
+
+        <li *ngIf="!topAhorradores.length" class="muted">
+          Sin información de ahorradores todavía.
+        </li>
+      </ol>
+    </article>
+
+    <!-- Resumen por rol + Actividad reciente -->
+    <article class="card">
+      <h3>Resumen por rol</h3>
+      <br />
+      <ul class="roles-list">
+        <li *ngFor="let r of resumenRoles">
+          <span class="rol">{{ r.rol }}</span>
+          <span class="count">{{ r.total }}</span>
+        </li>
+        <li *ngIf="!resumenRoles.length" class="muted">
+          Aún no hay usuarios registrados.
+        </li>
+      </ul>
+
+      <!-- Actividad reciente -->
+      <div class="actividad-reciente" *ngIf="actividadesRecientes.length">
+        <h4>Actividad reciente</h4>
+        <ul class="actividad-list">
+          <li
+            *ngFor="let a of actividadesRecientes; let i = index"
+            [class.latest]="i === 0"
+          >
+            <div class="act-header">
+              <span class="act-user">{{ a.usuario }}</span>
+              <span class="act-title">• {{ a.titulo }}</span>
+            </div>
+
+            <div class="act-role-chip">
+              {{ a.rol }}
+            </div>
+
+            <p class="act-desc">
+              {{ a.descripcion }}
+            </p>
+
+            <div class="act-meta" *ngIf="a.fecha as f">
+              <span>{{ f | date: 'dd/MM/yyyy' }}</span>
+              <span>•</span>
+              <span>{{ f | date: 'shortTime' }}</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div *ngIf="!actividadesRecientes.length" class="actividad-empty">
+        Sin actividad reciente registrada.
+      </div>
+    </article>
+
+    <!-- Accesos rápidos -->
+    <article class="card quick-links">
+      <h3>Accesos rápidos</h3>
+      <br />
+      <div class="quick-grid">
+        <a routerLink="/pase/usuarios" class="quick-link">
+          <div class="quick-icon">
+            <i class="fi fi-sr-users-alt"></i>
+          </div>
+          <span class="quick-text">Gestión de usuarios</span>
+        </a>
+
+        <a routerLink="/pase/ciclos" class="quick-link">
+          <div class="quick-icon">
+            <i class="fi fi-sr-rotate-right"></i>
+          </div>
+          <span class="quick-text">Ciclos de ahorro</span>
+        </a>
+
+        <a routerLink="/pase/prestamos" class="quick-link">
+          <div class="quick-icon">
+            <i class="fi fi-sr-handshake-deal-loan"></i>
+          </div>
+          <span class="quick-text">Préstamos</span>
+        </a>
+
+        <a routerLink="/pase/prestamos-grupales" class="quick-link">
+          <div class="quick-icon">
+            <i class="fi fi-sr-coins"></i>
+          </div>
+          <span class="quick-text">Préstamos grupales</span>
+        </a>
+      </div>
+    </article>
+
+    <!-- Notas importantes -->
+    <article class="card notes-card">
+      <h3>Notas importantes</h3>
+      <ul>
+        <li *ngFor="let n of notas">
+          <i class="fi fi-sr-info"></i>
+          <span>{{ n }}</span>
+        </li>
+      </ul>
+    </article>
+  </div>
+</section>

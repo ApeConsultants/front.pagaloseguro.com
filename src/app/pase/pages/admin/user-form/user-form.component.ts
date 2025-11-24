@@ -43,7 +43,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
     this.userForm = this.fb.group({
       nombre: ['', [Validators.required]],
       apellidos: ['', [Validators.required]],
-      correo: ['', [Validators.required, Validators.email]],
+      correo: [{ value: '', disabled: true }, [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       tipoUsuario: [null, [Validators.required]],
       genero: ['M', [Validators.required]],
@@ -76,6 +76,7 @@ ngOnInit(): void {
 
       this.loadUserData();
     } else {
+      this.userForm.get('correo')?.enable();
       this.userForm.get('password')?.setValidators([Validators.required, Validators.minLength(8)]);
       this.userForm.get('password')?.updateValueAndValidity();
     }

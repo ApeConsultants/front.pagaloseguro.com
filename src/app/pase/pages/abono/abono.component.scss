@@ -1,0 +1,455 @@
+@use '../../../../styles' as *;
+
+$primary: #4f46e5;
+
+/* Contenedor principal */
+.abono-page {
+  padding: 24px;
+  max-width: 720px;
+  margin: 0 auto;
+  padding-bottom: 48px;
+}
+
+/* Header + título (igual estilo hero) */
+.hero {
+  margin-bottom: 16px;
+
+  h1 {
+    margin: 0 0 6px 0;
+    color: #0f172a;
+  }
+}
+
+/* Botón regresar (mismo diseño que abono-detail .btn-back) */
+.btn-back {
+  @extend .ButtonConfig;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 16px;
+  color: #fff;
+  text-decoration: none;
+  background: var(--primary-color);
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+/* Paneles de estado */
+.panel {
+  padding: 16px;
+  border-radius: 12px;
+
+  &.loading {
+    background: #f8fafc;
+    color: #0f172a;
+  }
+
+  &.error {
+    background: #fff1f2;
+    color: #be123c;
+    border: 1px solid #fecdd3;
+  }
+}
+
+/* Cards (reutilizamos diseño de abono-detail) */
+.card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+
+  h3 {
+    margin-top: 0;
+    color: #0f172a;
+  }
+}
+
+/* Alertas de carga */
+.alert {
+  padding: 1rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.alert-info {
+  color: #31708f;
+  background: #d9edf7;
+  border: 1px solid #bce8f1;
+}
+
+.alert.loading-inline,
+.alert-info.loading-inline {
+  display: block;
+  margin: 2rem auto;
+  padding: 0.9rem 2.5rem;
+  border-radius: 8px;
+  width: clamp(320px, 56vw, 720px);
+  max-width: calc(100% - 48px);
+  background: #e7f3fb;
+  border: 1px solid #bcdff1;
+  color: #31708f;
+  box-shadow: none;
+}
+
+/* =================================
+   STEPPER
+   ================================= */
+.stepper-container {
+  position: relative;
+  margin-top: 8px;
+}
+
+.step-card {
+  position: static;
+  width: 100%;
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  box-sizing: border-box;
+  transition: none;
+  display: none;
+}
+
+.step-card.active {
+  display: block;
+}
+
+/* ==========================
+   ROWS Y RESÚMENES
+   ========================== */
+.summary-details .row,
+.summary-box .row,
+.beneficiary-info .row {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0;
+
+  .label {
+    color: #6b7280;
+  }
+
+  .value {
+    color: #0f172a;
+  }
+
+  .money {
+    font-weight: 700;
+  }
+}
+
+.summary-details {
+  margin-bottom: 1.5rem;
+}
+
+.debt-row {
+  color: $primary;
+}
+
+/* ==========================
+   CONTROLES / BOTONES
+   ========================== */
+
+.actions-footer {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+
+  &.right-align {
+    justify-content: flex-end;
+  }
+
+  &.full-row {
+    justify-content: space-between;
+  }
+
+  .btn-primary,
+  .btn-ghost {
+    min-width: 120px;
+  }
+}
+
+/* Botón primario (Continuar / Abonar) */
+.btn-primary {
+  @extend .ButtonConfig;
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-weight: 700;
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  filter: grayscale(0.1);
+}
+
+/* Botón ghost (Regresar del Paso 2) */
+.btn-ghost {
+  @extend .ButtonConfig;
+  background: #fff;
+  color: #0f172a;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+/* ==========================
+   CAMPO: Cantidad a abonar
+   (mismo estilo que Monto base)
+   ========================== */
+.amount-label span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.amount-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-top: 0.8rem;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease,
+    background 0.18s ease;
+
+  &.invalid {
+    border-color: #fca5a5;
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.15);
+  }
+
+  &.valid {
+    border-color: #86efac;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+  }
+}
+
+.amount-field .prefix {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  color: #1f2937;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.amount-field .amount-input {
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-weight: 600;
+  font-size: clamp(20px, 2.4vw, 28px);
+  letter-spacing: 0.3px;
+  color: #0f172a;
+}
+
+/* Quitar flechas de number */
+.amount-input::-webkit-outer-spin-button,
+.amount-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.amount-input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+/* Alerta de validación (igual que depositar) */
+.amount-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fff7ed;
+  color: #9a3412;
+  font-weight: 600;
+
+  i {
+    font-size: 16px;
+    line-height: 1;
+  }
+}
+
+/* ==========================
+   ARCHIVO DE EVIDENCIA
+   ========================== */
+.file-field {
+  display: block;
+  cursor: pointer;
+  text-align: center;
+  padding: 1.5rem;
+  border: 2px dashed $primary;
+  border-radius: 12px;
+  color: $primary;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  transition: border-color 0.2s, background 0.2s;
+
+  i {
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+  }
+
+  &:hover {
+    background: rgba($primary, 0.05);
+  }
+}
+
+/* Preview de evidencia */
+.file-preview-box {
+  margin-top: 1rem;
+  text-align: center;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  .evidence-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  small {
+    display: block;
+    color: #64748b;
+  }
+}
+
+/* ==========================
+   MODAL ÉXITO
+   ========================== */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(15, 23, 42, 0.45);
+  z-index: 40;
+}
+
+.modal-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px 22px;
+  max-width: 420px;
+  width: calc(100% - 32px);
+}
+
+.modal-header h3 {
+  margin: 0 0 6px;
+  color: #0f172a;
+}
+
+.modal-subtitle {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.modal-footer {
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Separadores entre bloques del Paso 2 */
+.divider {
+  border: 0;
+  border-top: 1px dashed #e2e8f0;
+  margin: 1rem 0;
+}
+
+/* Campos de texto (Referencia / Concepto) */
+.form-fields {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field {
+  display: block;
+}
+
+.field span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.field input[type='text'] {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #1e293b;
+  background: #fff;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+  }
+}
+
+/* Layout vertical para botones dentro de la card en el Paso 2 */
+.actions-footer.vertical {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  justify-content: flex-end;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+
+    .btn-primary,
+    .btn-ghost {
+      width: 100%;
+    }
+  }
+}
+
+.actions-footer {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* ==========================
+   RESPONSIVE
+   ========================== */
+@media (max-width: 600px) {
+  .abono-page {
+    padding: 16px;
+  }
+
+  .actions-footer {
+    flex-direction: column;
+
+    .btn-primary,
+    .btn-ghost {
+      width: 100%;
+      min-width: auto;
+    }
+  }
+}

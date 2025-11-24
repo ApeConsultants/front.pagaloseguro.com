@@ -1,0 +1,65 @@
+<section class="page-container">
+  <header class="page-header">
+    <h1>Soporte Técnico - En construcción</h1>
+    <p class="muted">
+      En esta sección podrás reportar problemas o dudas sobre tu ahorro.
+    </p>
+  </header>
+
+  <article class="card">
+    <form #form="ngForm" (ngSubmit)="onSubmit(form)">
+      <div class="field">
+        <label for="tipo">Tipo de solicitud</label>
+        <select id="tipo" name="tipo" ngModel required>
+          <option value="" disabled selected>Selecciona una opción</option>
+          <option value="duda">Duda sobre mi ahorro</option>
+          <option value="deposito">Problema con un depósito</option>
+          <option value="app">Problema técnico con la app</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="asunto">Asunto</label>
+        <input
+          id="asunto"
+          type="text"
+          name="asunto"
+          ngModel
+          required
+          maxlength="120"
+          placeholder="Ej. No veo mi último depósito"
+        />
+      </div>
+
+      <div class="field">
+        <label for="mensaje">Mensaje</label>
+        <textarea
+          id="mensaje"
+          name="mensaje"
+          ngModel
+          rows="4"
+          required
+          placeholder="Describe qué fue lo que ocurrió…"
+        ></textarea>
+      </div>
+
+      <p class="muted small">
+        Este formulario aún no envía información real.
+      </p>
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="sending || form.invalid"
+      >
+        {{ sending ? 'Enviando…' : 'Enviar mensaje' }}
+      </button>
+
+      <div *ngIf="submitted" class="alert-success">
+        Hemos recibido tu solicitud de ejemplo. Más adelante verás aquí el
+        estatus real de tus tickets.
+      </div>
+    </form>
+  </article>
+</section>

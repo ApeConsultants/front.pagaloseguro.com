@@ -1,0 +1,68 @@
+@import '../../../../../styles.scss';
+
+.page-container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.page-header {
+  margin-bottom: 1.5rem;
+
+  h1 {
+    margin: 0 0 .25rem;
+    color: var(--primary-color);
+  }
+
+  .muted {
+    color: #6b7280;
+  }
+}
+
+.card.profile-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, .08);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.5rem;
+}
+
+.avatar-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  display: grid;
+  place-items: center;
+  font-size: 36px;
+  color: #4b5563;
+}
+
+.fields {
+  .field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: .75rem;
+
+    label {
+      font-size: .8rem;
+      font-weight: 600;
+      color: #6b7280;
+      margin-bottom: .2rem;
+    }
+
+    input {
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: .5rem .7rem;
+      font-size: .9rem;
+      background: #f9fafb;
+    }
+  }
+
+  .small {
+    font-size: .8rem;
+  }
+}

@@ -1,0 +1,32 @@
+<header class="saver-header-container">
+  <div class="logo">
+    <img [src]="logoSrc" alt="Págalo Seguro">
+    <span class="logo-text">Págalo Seguro</span>
+  </div>
+
+  <nav class="saver-nav">
+    <a routerLink="/pase" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+    <a routerLink="/pase/progreso" routerLinkActive="active">Mi Avance</a>
+  </nav>
+
+  <div class="user-menu">
+    <button (click)="toggleDropdown()" class="profile-btn" title="Mi Perfil">
+      <i class="fi fi-sr-circle-user"></i>
+    </button>
+    
+    <div *ngIf="isDropdownOpen" class="profile-dropdown">
+      <a routerLink="/pase/perfil-saver" class="dropdown-item">
+        <i class="fi fi-sr-user-pen"></i> Perfil
+      </a>
+      <a routerLink="/pase/soporte" class="dropdown-item">
+        <i class="fi fi-sr-life-ring"></i> Soporte Técnico
+      </a>
+      <a routerLink="/pase/ajustes" class="dropdown-item">
+        <i class="fi fi-sr-settings"></i> Ajustes
+      </a>
+      <button (click)="onLogout()" class="dropdown-item logout">
+        <i class="fi fi-sr-exit"></i> Cerrar Sesión
+      </button>
+    </div>
+  </div>
+</header>

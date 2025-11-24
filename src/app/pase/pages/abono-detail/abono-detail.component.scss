@@ -1,0 +1,404 @@
+@import '../../../../styles.scss';
+
+.abono-detail {
+  padding: 24px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.hero {
+  margin-bottom: 16px;
+
+  h1 {
+    margin: 0 0 6px 0;
+    color: #0f172a;
+    font-size: 1.6rem;
+  }
+
+  p {
+    color: #6b7280;
+  }
+}
+
+.abono-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.abono-title__id {
+  color: #6b7280; // gris
+  font-weight: 500;
+}
+
+.abono-title__status {
+  font-weight: 600;
+}
+
+/* Colores de texto según status (usa mismos tonos que las pills) */
+.abono-title__status.status-text--conciliado {
+  color: #166534; // verde
+}
+
+.abono-title__status.status-text--pendiente {
+  color: #374151; // gris oscuro
+}
+
+.abono-title__status.status-text--abierto {
+  color: #854d0e; // amarillo oscuro
+}
+
+.abono-title__status.status-text--rechazado {
+  color: #b91c1c; // rojo
+}
+
+.panel {
+  padding: 16px;
+  border-radius: 12px;
+
+  &.loading {
+    background: #f8fafc;
+    color: #0f172a;
+  }
+
+  &.error {
+    background: #fff1f2;
+    color: #be123c;
+    border: 1px solid #fecdd3;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+
+  @media (min-width: 900px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    color: #0f172a;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+
+    .label {
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+
+    .value {
+      color: #0f172a;
+      font-size: 0.95rem;
+    }
+
+    .money {
+      font-weight: 700;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+  }
+}
+
+/* Botón regresar */
+.btn-back {
+  @extend .ButtonConfig;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 16px;
+  color: #fff;
+  text-decoration: none;
+  background: var(--primary-color);
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+/* Pills de estado */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  min-width: 96px;
+}
+
+.pill--conciliado {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.pill--pendiente {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.pill--abierto {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.pill--rechazado {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Evidencias */
+.evidencias {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 8px;
+
+  @media (min-width: 600px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  figure {
+    margin: 0;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  img {
+    width: 100%;
+    display: block;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  figcaption {
+    padding: 6px 8px;
+    font-size: 12px;
+    color: #475569;
+  }
+
+  .muted {
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+}
+
+/* Bloque de acciones */
+.actions {
+  margin-top: 16px;
+  padding: 16px 18px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.confirm-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  max-width: 520px;
+  font-size: 0.9rem;
+  color: #475569;
+
+  input[type='checkbox'] {
+    margin-top: 2px;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary-color);
+  }
+}
+
+.btn-group {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* Botones de acción */
+.btn-secondary {
+  @extend .ButtonConfig;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #0f172a;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-outline {
+  @extend .ButtonConfig;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.btn-secondary.disabled,
+.btn-outline.disabled,
+.btn-secondary:disabled,
+.btn-outline:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  filter: grayscale(0.15);
+}
+
+/* ==========================
+   COMENTARIOS
+   ========================== */
+
+.comentarios-card {
+  margin-top: 16px;
+
+  .muted {
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+}
+
+.comentarios-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+
+  textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    font-size: 0.9rem;
+    resize: vertical;
+    font-family: inherit;
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+    }
+  }
+}
+
+.comentarios-form__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.comentarios-error {
+  color: #b91c1c;
+  font-size: 0.85rem;
+}
+
+/* Botón para comentar */
+.btn-comment {
+  @extend .ButtonConfig;
+  background: #0f172a;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    filter: grayscale(0.1);
+  }
+}
+
+.comentarios-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.comentario-item {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+}
+
+.comentario-item__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 4px;
+  font-size: 0.8rem;
+
+  .comentario-usuario {
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .comentario-fecha {
+    color: #6b7280;
+  }
+}
+
+.comentario-text {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #111827;
+}
+
+@media (max-width: 600px) {
+  .abono-detail {
+    padding: 16px;
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-group {
+    width: 100%;
+
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}

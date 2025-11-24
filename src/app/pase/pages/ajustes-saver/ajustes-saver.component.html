@@ -1,0 +1,43 @@
+<section class="page-container">
+  <header class="page-header">
+    <h1>Ajustes - En construcción</h1>
+    <p class="muted">
+      Configura opciones generales de tu cuenta.
+    </p>
+  </header>
+
+  <article class="card">
+    <h2>Notificaciones</h2>
+
+    <label class="toggle">
+      <input type="checkbox" [(ngModel)]="emailNotifications" />
+      <span>Recibir correos cuando se registre un nuevo depósito</span>
+    </label>
+
+    <label class="toggle">
+      <input type="checkbox" [(ngModel)]="appNotifications" />
+      <span>Mostrar recordatorios antes del día de corte</span>
+    </label>
+
+    <hr />
+
+    <h2>Preferencias de la app</h2>
+
+    <label class="toggle">
+      <input type="checkbox" [(ngModel)]="darkMode" />
+      <span>Modo oscuro</span>
+    </label>
+
+    <div class="field">
+      <label for="language">Idioma</label>
+      <select id="language" [(ngModel)]="language">
+        <option value="es">Español (MX)</option>
+        <option value="en">Inglés</option>
+      </select>
+    </div>
+
+    <p class="muted small">
+      Estos ajustes aún no tienen función en el servidor.
+    </p>
+  </article>
+</section>

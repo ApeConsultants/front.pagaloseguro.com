@@ -4,16 +4,14 @@ import { UserService } from '../../../../core/services/user.service';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
+import { DialogService } from '../../../../core/services/dialog.service';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterLink
-  ],
+  imports: [CommonModule, RouterLink],
   templateUrl: './user-list.component.html',
-  styleUrl: './user-list.component.scss'
+  styleUrls: ['./user-list.component.scss']
 })
 export class UserListComponent implements OnInit {
   public users$!: Observable<any>;
@@ -22,7 +20,8 @@ export class UserListComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private authService: AuthService
+    private authService: AuthService,
+    private dialogService: DialogService
   ) {}
 
   ngOnInit(): void {
@@ -31,36 +30,48 @@ export class UserListComponent implements OnInit {
   }
 
   loadUsers(): void {
-    this.users$ = this.userService.getUsers();
+    this.users$ = this.userService.getListaUsuarios();
   }
 
   onDelete(id: number): void {
-    if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
-      this.userService.deleteUser(id).subscribe({
-        next: (response) => {
-          if (response.status === 'success') {
-            alert('Usuario eliminado correctamente.');
-            this.loadUsers();
-          } else {
-            alert(`Error al eliminar: ${response.msg}`);
+    const dialogData = {
+      title: 'Confirmar Eliminación',
+      message: 'Esta acción no se puede deshacer. ¿Estás seguro de que deseas eliminar este usuario?',
+      confirmText: 'Sí, Eliminar',
+      type: 'confirm' as const
+    };
+
+    this.dialogService.open(dialogData).subscribe(confirmed => {
+      if (confirmed) {
+        this.userService.deleteUser(id).subscribe({
+          next: (response) => {
+            if (response.status === 'success') {
+              this.loadUsers();
+            } else {
+              this.dialogService.open({ 
+                title: 'Error al Eliminar', 
+                message: response.msg,
+                type: 'alert'
+              });
+            }
+          },
+          error: (err) => {
+            console.error(err);
+            this.dialogService.open({ 
+              title: 'Error de Conexión', 
+              message: 'No se pudo completar la acción.',
+              type: 'alert'
+            });
           }
-        },
-        error: (err) => {
-          console.error(err);
-          alert('Error de conexión al eliminar el usuario.');
-        }
-      });
-    }
+        });
+      }
+    });
   }
 
   canCreate(): boolean {
     return this.userType === 'admin' || this.userType === 'ejecutivo';
   }
 
-  /**
-   *
-   * @param userToEditTipo
-   */
   canEdit(userToEditTipo: number): boolean {
     if (this.userType === 'admin') {
       return true;

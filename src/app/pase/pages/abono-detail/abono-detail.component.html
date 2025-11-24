@@ -1,0 +1,206 @@
+<section class="abono-detail">
+  <a routerLink="/pase/abonos-pendientes" class="btn-back">
+    <i class="fi fi-sr-angle-left"></i> Regresar
+  </a>
+
+  <header class="hero">
+    <ng-container *ngIf="abono; else simpleTitle">
+      <h1 class="abono-title">
+        Detalle del abono
+        <span class="abono-title__id">#{{ abono.id_abono }}</span>
+        ·
+        <span
+          class="abono-title__status"
+          [ngClass]="getStatusTextClass(abono.status)"
+        >
+          {{ abono.status | titlecase }}
+        </span>
+      </h1>
+    </ng-container>
+    <ng-template #simpleTitle>
+      <h1>Detalle del abono</h1>
+    </ng-template>
+  </header>
+
+  <div *ngIf="loading" class="panel loading">Cargando…</div>
+  <div *ngIf="!loading && error" class="panel error">{{ error }}</div>
+
+  <ng-container *ngIf="!loading && !error && abono">
+    <div class="grid">
+      <div class="card">
+        <h3>Información</h3>
+
+        <div class="row">
+          <span class="label">Monto</span>
+          <span class="value money">
+            ${{ abono.monto_abono | number : "1.2-2" }}
+          </span>
+        </div>
+
+        <div class="row">
+          <span class="label">Referencia</span>
+          <span class="value mono">{{ abono.referencia || "—" }}</span>
+        </div>
+
+        <div class="row">
+          <span class="label">Concepto</span>
+          <span class="value mono">{{ abono.concepto || "—" }}</span>
+        </div>
+
+        <div class="row">
+          <span class="label">Creado</span>
+          <span class="value">
+            {{ abono.fe_create | date : "medium" }}
+          </span>
+        </div>
+
+        <div class="row">
+          <span class="label">Creado por</span>
+          <span class="value">
+            {{ abono.user_create || "—" }}
+          </span>
+        </div>
+
+        <div class="row">
+          <span class="label">Estado</span>
+          <span class="value">
+            <span class="pill" [ngClass]="getStatusPillClass(abono.status)">
+              {{ abono.status | titlecase }}
+            </span>
+          </span>
+        </div>
+
+        <div class="row" *ngIf="abono.usuario_conciliacion">
+          <span class="label">Usuario conciliación</span>
+          <span class="value">
+            {{ abono.usuario_conciliacion }}
+          </span>
+        </div>
+
+        <div class="row" *ngIf="abono.fe_conciliacion">
+          <span class="label">Fecha conciliación</span>
+          <span class="value">
+            {{ abono.fe_conciliacion | date : "medium" }}
+          </span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Evidencias</h3>
+
+        <div class="evidencias">
+          <a
+            *ngFor="let e of abono.evidencias || []"
+            [href]="fileUrl(e.file_path)"
+            target="_blank"
+            rel="noopener"
+          >
+            <figure>
+              <img [src]="fileUrl(e.file_path)" alt="Evidencia" />
+              <figcaption>
+                {{ e.fe_create | date : "short" }}
+              </figcaption>
+            </figure>
+          </a>
+
+          <p
+            *ngIf="!(abono.evidencias && abono.evidencias.length)"
+            class="muted"
+          >
+            Aún no hay evidencias.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones: Conciliar / Rechazar -->
+    <div
+      class="actions"
+      *ngIf="
+        canConciliar &&
+        abono &&
+        (abono.status === 'ABIERTO' || abono.status === 'PENDIENTE')
+      "
+    >
+      <div class="confirm-check">
+        <input type="checkbox" [(ngModel)]="acceptCheck" />
+        <span>
+          Confirmo que la información es correcta y la evidencia es aprobada.
+        </span>
+      </div>
+
+      <div class="btn-group">
+        <button
+          type="button"
+          class="btn-secondary"
+          [class.disabled]="!acceptCheck"
+          [disabled]="!acceptCheck || conciliando || rechazando"
+          (click)="conciliar()"
+        >
+          {{ conciliando ? "Conciliando…" : "Conciliar" }}
+        </button>
+
+        <button
+          type="button"
+          class="btn-outline"
+          [disabled]="rechazando || conciliando"
+          (click)="rechazar()"
+        >
+          {{ rechazando ? "Rechazando…" : "Rechazar" }}
+        </button>
+      </div>
+    </div>
+
+        <!-- Comentarios del abono -->
+    <div class="card comentarios-card">
+      <h3>Comentarios</h3>
+
+      <!-- Formulario para nuevo comentario -->
+      <div class="comentarios-form">
+        <textarea
+          [(ngModel)]="nuevoComentario"
+          name="nuevoComentario"
+          rows="3"
+          placeholder="Escribe un comentario sobre este abono…"
+        ></textarea>
+
+        <div class="comentarios-form__footer">
+          <span class="comentarios-error" *ngIf="comentarioError">
+            {{ comentarioError }}
+          </span>
+
+          <button
+            type="button"
+            class="btn-comment"
+            [disabled]="postingComentario || !nuevoComentario?.trim()"
+            (click)="crearComentario()"
+          >
+            {{ postingComentario ? 'Guardando…' : 'Agregar comentario' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Historial de comentarios -->
+      <div class="comentarios-list" *ngIf="comentarios?.length; else noComments">
+        <article class="comentario-item" *ngFor="let c of comentarios">
+          <header class="comentario-item__header">
+            <span class="comentario-usuario">
+              {{ c.usuario || 'Usuario' }}
+            </span>
+            <span class="comentario-fecha">
+              {{ c.fecha | date: 'mediumDate' }}
+            </span>
+          </header>
+          <p class="comentario-text">
+            {{ c.comentario }}
+          </p>
+        </article>
+      </div>
+
+      <ng-template #noComments>
+        <p class="muted">Aún no hay comentarios para este abono.</p>
+      </ng-template>
+    </div>
+
+  </ng-container>
+</section>
