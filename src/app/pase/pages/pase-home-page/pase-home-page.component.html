@@ -1,1 +1,145 @@
-<p>pase-home-page works!</p>
+<ng-container *ngIf="ahorroData$ | async as response; else loading">
+
+  <!-- VISTA 2: Usuario YA vinculado (success) -->
+  <ng-container *ngIf="response.status === 'success' && response.data as data; else notLinked">
+    <div class="home-grid">
+
+      <div class="ahorro-column">
+<div class="ahorro-card">
+  <div class="card-header">
+    <h3>Ahorro</h3>
+    <div class="options-menu">
+      <button (click)="toggleAhorroMenu()" class="options-btn" aria-label="Más opciones">
+        <i class="fi fi-sr-menu-dots-vertical"></i>
+      </button>
+      <div *ngIf="isAhorroMenuOpen" class="options-dropdown">
+        <a routerLink="/pase/ahorros-anteriores">Consultar otros ahorros</a>
+      </div>
+    </div>
+  </div>
+
+  <h1 class="ahorro-total">
+    ${{ (data?.abonos ?? 0) | number:'1.2-2' }}
+  </h1>
+</div>
+
+        <button class="btn-deposit-main" routerLink="/pase/depositar">
+          Depositar ahora
+        </button>
+      </div>
+
+      <div class="widgets-column">
+<article class="card streak-card">
+  <header class="center">
+    <h4>Racha Semanal</h4>
+  </header>
+
+  <div class="streak-body">
+    <div class="streak-ring">
+      <div class="ring-inner">
+        <i class="fi fi-sr-award" aria-hidden="true"></i>
+        <div class="w-num">
+          {{ data?._streak ?? 0 }}
+          <small>semanas</small>
+        </div>
+      </div>
+    </div>
+
+          <div class="streak-text">
+            <p style="margin-bottom:.35rem;">
+              Has mantenido una racha de <strong>{{ data?._streak ?? 0 }}</strong> semanas.
+            </p>
+            <p class="muted" style="margin-top:.35rem;">
+              <!-- Hay que solicitar a backend un "almacen" de la racha Tu racha más larga es de <strong>{{ getLongestStreak(data) }}</strong> semanas. -->
+            </p>
+          </div>
+        </div>
+        </article>
+
+        <article class="card cutoff-card">
+          <header><h4>Próximo Corte</h4></header>
+          <div class="cutoff-body">
+            <div class="cutoff-icon"><i class="fi fi-rr-clock"></i></div>
+            <div class="cutoff-text">
+              <p class="corte-fecha"><strong>{{ getCorteFecha(data) }}</strong></p>
+              <p class="corte-hora">{{ getCorteHora(data) }}</p>
+              <p class="corte-desc">Asegúrate de realizar tu depósito antes de esta fecha para mantener tu racha.</p>
+            </div>
+          </div>
+        </article>
+      </div>
+
+    </div>
+  </ng-container>
+
+  <!-- VISTA 1: Usuario SIN vincular (no_cycle | no_ahorro) => tarjeta + subpantalla en esta ruta -->
+  <ng-template #notLinked>
+    <div class="widget-card">
+      <h4>Sin ahorro activo 💸.</h4>
+      <p *ngIf="response.status==='no_ahorro'">Para comenzar a ahorrar, regístrate al ciclo actual.</p>
+      <p *ngIf="response.status==='no_cycle'">Por ahora no detectamos un ciclo activo; si existe, podrás verlo a continuación.</p>
+
+      <button class="btn btn-primary" style="margin-top:.5rem;" (click)="abrirRegistro()">
+        Registrarse
+      </button>
+    </div>
+
+    <!-- Modal (subpantalla) -->
+<div class="modal" *ngIf="showEnroll">
+    <div class="modal-card compact-modal">
+      
+      <header class="modal-header">
+        <h3>Unirse a un ciclo</h3>
+        <p class="modal-subtitle">Selecciona el periodo en el que deseas ahorrar.</p>
+      </header>
+
+      <div class="alert alert-info loading-inline" *ngIf="loadingCiclos">Cargando opciones...</div>
+
+      <ng-container *ngIf="!loadingCiclos">
+        <div *ngIf="ciclosDisponibles.length; else sinCiclos" class="cycles-list">
+          
+          <div 
+            *ngFor="let c of ciclosDisponibles" 
+            class="cycle-option" 
+            [class.selected]="selectedCycleCode === c.code"
+            (click)="selectCycle(c.code)">
+            
+            <div class="radio-indicator">
+              <div class="radio-inner" *ngIf="selectedCycleCode === c.code"></div>
+            </div>
+
+            <div class="cycle-info">
+              <span class="cycle-name">Ciclo {{ c.code }}</span>
+              <span class="cycle-dates">
+                Del {{ c.fe_inicio | date:'dd/MM/yyyy' }} al {{ c.fe_fin | date:'dd/MM/yyyy' }}
+              </span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-ghost" (click)="showEnroll=false">Cancelar</button>
+          
+          <button class="btn btn-primary" 
+            [disabled]="registering || !selectedCycleCode || ciclosDisponibles.length === 0" 
+            (click)="registrarmeAlCiclo()">
+            {{ registering ? 'Registrando...' : 'Confirmar inscripción' }}
+          </button>
+        </div>
+
+        <ng-template #sinCiclos>
+          <div class="empty-state">
+            <p class="muted">No hay ciclos activos disponibles por el momento.</p>
+            <button class="btn btn-ghost" (click)="showEnroll=false">Cerrar</button>
+          </div>
+        </ng-template>
+      </ng-container>
+    </div>
+  </div>
+  </ng-template>
+</ng-container>
+
+<ng-template #loading>
+  <div class="alert alert-info loading-inline">Cargando...</div>
+</ng-template>

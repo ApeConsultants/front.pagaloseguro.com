@@ -1,0 +1,97 @@
+@import '../../../../styles.scss';
+
+:host {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+.dialog-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.3s ease;
+  pointer-events: auto;
+}
+
+.dialog-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  padding: 2rem;
+  width: 90%;
+  max-width: 450px;
+  animation: slideIn 0.3s ease-out;
+  pointer-events: auto;
+  z-index: 10001;
+}
+
+.dialog-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.dialog-message {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+
+  &.is-alert {
+    justify-content: center;
+  }
+
+  .btn {
+    @extend .ButtonConfig;
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+  }
+
+  .btn-cancel {
+    background-color: #f1f1f1;
+    color: #555;
+    &:hover {
+      background-color: #e0e0e0;
+    }
+  }
+
+  .btn-confirm {
+    background-color: var(--primary-color);
+    color: #fff;
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideIn {
+  from { top: 45%; opacity: 0; }
+  to { top: 50%; opacity: 1; }
+}

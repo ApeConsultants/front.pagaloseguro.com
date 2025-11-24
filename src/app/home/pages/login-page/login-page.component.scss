@@ -1,55 +1,74 @@
 @import '../../../../styles.scss';
 
-.login-container {
+:host {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 80vh;
-  padding: 2rem;
-}
-
-form {
   width: 100%;
-  max-width: 400px;
+  min-height: 100vh;
   padding: 2rem;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background-image: url('/assets/img/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+// Contenedor principal del logo y formulario
+.login-wrapper {
+  max-width: 450px;
+  width: 100%;
+  text-align: center;
+}
+
+// Logo
+.login-logo {
+  max-width: 250px;
+  margin: 0 auto 2rem auto;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
+}
+
+// Tarjeta de Formulario
+.login-card {
   background: #fff;
+  padding: 2.5rem 3rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  text-align: left;
+
+  h2 {
+    text-align: center;
+    color: #ae8c00;
+    font-size: 1.3rem;
+    margin-top: 0;
+    font-weight: 700;
+  }
+  
+  p {
+    text-align: center;
+    color: #666;
+    margin-bottom: 2rem;
+  }
 }
 
-h2 {
-  text-align: center;
-  color: var(--primary-color);
-  margin-bottom: 0.5rem;
-}
-
-p {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  color: #666;
-}
-
+// Estilos de Formulario
 .form-group {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
 
   label {
+    display: block;
     font-weight: 600;
-    margin-bottom: 0.3rem;
-    font-size: 0.9rem;
+    color: #333;
+    margin-bottom: 0.5rem;
   }
 
   input {
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     font-size: 1rem;
     font-family: 'Montserrat', sans-serif;
-    transition: border-color 300ms ease;
-
+    
     &:focus {
       outline: none;
       border-color: var(--primary-color);
@@ -60,38 +79,220 @@ p {
 
 button[type="submit"] {
   @extend .ButtonConfig;
-
   width: 100%;
-  padding: 0.8rem 1rem;
-  font-size: 1rem;
-  font-weight: 600;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: #fff;
   background-color: var(--primary-color);
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   margin-top: 1rem;
 
   &:disabled {
     background-color: #ccc;
     cursor: not-allowed;
-    opacity: 0.7;
-    transform: none;
   }
 }
 
-// === Mensajes de error ===
+// Mensajes de error
 .error-message {
   color: var(--contraste);
-  font-size: 0.8rem;
-  margin-top: 0.25rem;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
 }
 
 .api-error-message {
-  color: var(--contraste);
-  background-color: rgba($contraste, 0.1);
-  border: 1px solid var(--contraste);
-  padding: 0.75rem;
-  border-radius: 4px;
-  text-align: center;
-  margin-top: 1rem;
+  display: none;
+}
+
+/* ===== Navbar ===== */
+:host { --navH: 80px; }
+
+.login-nav {
+  width: 100%;
+  height: var(--navH);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+
+  &.active {
+    background: rgba(44, 57, 48, 0.1);
+    backdrop-filter: blur(10px);
+  }
+}
+
+/* Logo dentro de la barra */
+.nav-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  margin-left: 16px;
+}
+.nav-logo img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+/* Enlaces a la derecha */
+.nav-list {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  flex-direction: row;
+  margin: 0;
+  padding: 0;
+  margin-left: auto;
+}
+
+.nav-list li {
+  cursor: pointer;
+  transition: color 0.3s;
+  color: var(--primary-color);
+
+  a {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    padding: 10px 14px;
+    border-radius: 8px;
+    transition: background-color .2s ease, color .2s ease;
+  }
+
+  &:hover a,
+  a:focus-visible {
+    background: color-mix(in oklab, var(--primary-color) 92%, white);
+    color: #fff;
+    outline: none;
+  }
+}
+
+/* Hueco reservado para un futuro "Registro" (vacío) */
+.nav-slot {
+  flex: 0 0 auto;
+  width: 140px;
+  height: 40px;
+  margin: 0 16px 0 12px;
+  pointer-events: none;
+  background: transparent;
+}
+
+/* Línea inferior estilo landing */
+.line {
+  width: 100%;
+  height: 2px;
+  background: color-mix(in oklab, var(--primary-color) 45%, transparent);
+  position: fixed;
+  top: var(--navH);
+  left: 0;
+  z-index: 11;
+  transition: 0.3s ease;
+}
+.lineactive { width: 100%; }
+
+.login-main {
+  padding-top: calc(var(--navH) + 2px);
+  min-height: calc(100vh - (var(--navH) + 2px));
+  display: grid;
+  place-items: center;
+}
+
+@media (max-width: 800px) {
+  :host { --navH: 72px; }
+  .login-nav { padding: 16px; }
+  .nav-list { gap: 12px; flex-wrap: wrap; }
+  .nav-list li a { padding: 8px 12px; }
+}
+
+@supports not (color: color-mix(in oklab, white 50%, black)) {
+  .nav-list li:hover a,
+  .nav-list li a:focus-visible { background: var(--primary-color); color: #fff; }
+  .line { background: rgba(0,0,0,.08); }
+}
+
+/* ================= Hamburguesa / responsive ================= */
+
+.nav-toggle {
+  position: absolute;
+  right: 16px;
+  top: calc(var(--navH) / 2);
+  transform: translateY(-50%);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--primary-color);
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease;
+}
+.nav-toggle:hover { background: rgba(0,0,0,.05); }
+
+/* Desktop */
+@media (min-width: 801px) {
+  .login-nav { justify-content: flex-start; }
+  .nav-list {
+    display: flex;
+    gap: 20px;
+    flex-direction: row;
+  }
+  .nav-toggle { display: none; }
+}
+
+/* Móvil */
+@media (max-width: 800px) {
+  :host { --navH: 72px; }
+
+  .login-nav {
+    padding: 16px 16px;
+    justify-content: flex-start;
+  }
+
+  .nav-toggle { display: inline-flex; }
+
+  .nav-slot { display: none; }
+
+  .nav-list {
+    position: fixed;
+    top: var(--navH);
+    left: 0;
+    right: 0;
+    z-index: 12;
+
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    margin: 0;
+    padding: 12px 10px;
+
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid color-mix(in oklab, var(--primary-color) 22%, transparent);
+    box-shadow: 0 10px 20px rgba(0,0,0,.08);
+  }
+
+  .login-nav.open .nav-list { display: flex; }
+  .nav-list li a { padding: 8px 12px; }
+}
+
+@supports not (color: color-mix(in oklab, white 50%, black)) {
+  .nav-list li:hover a,
+  .nav-list li a:focus-visible { background: var(--primary-color); color: #fff; }
+  .line { background: rgba(0,0,0,.08); }
+
+  @media (max-width: 800px) {
+    .nav-list { border-bottom-color: rgba(0,0,0,.08); }
+  }
 }

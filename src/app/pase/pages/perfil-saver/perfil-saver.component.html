@@ -1,0 +1,87 @@
+<section class="page-container">
+  <header class="page-header">
+    <h1>Mi perfil</h1>
+    <p class="muted">
+      Información básica de tu cuenta como ahorrador y el historial de tus
+      insignias.
+    </p>
+  </header>
+
+  <div class="grid">
+    <!-- Perfil -->
+    <article class="card profile-card">
+      <div class="avatar">
+        <div class="avatar-circle">
+          <i class="fi fi-sr-circle-user"></i>
+        </div>
+        <button class="btn btn-secondary" type="button" disabled>
+          Cambiar foto (próximamente)
+        </button>
+      </div>
+
+      <div class="fields">
+        <div class="field">
+          <label>Nombre</label>
+          <input
+            type="text"
+            placeholder="Nombre"
+            readonly
+            value="—"
+          />
+        </div>
+
+        <div class="field">
+          <label>Apellido</label>
+          <input
+            type="text"
+            placeholder="Apellido"
+            readonly
+            value="—"
+          />
+        </div>
+
+        <div class="field">
+          <label>RFC</label>
+          <input
+            type="text"
+            placeholder="RFC"
+            readonly
+            value="—"
+          />
+        </div>
+      </div>
+    </article>
+
+    <!-- Insignias -->
+    <article class="card badges-card">
+      <header class="card-header">
+        <h2>Insignias</h2>
+        <p class="muted small">
+          Historial de insignias conseguidas y objetivos en curso.
+        </p>
+      </header>
+
+      <ul class="badges-list">
+        <li
+          *ngFor="let badge of badges"
+          class="badge-item"
+          [ngClass]="getBadgeClass(badge)"
+        >
+          <div class="badge-main">
+            <span class="badge-title">{{ badge.title }}</span>
+            <span class="badge-status">
+              {{
+                badge.status === 'earned'
+                  ? 'Conseguida'
+                  : badge.status === 'in_progress'
+                  ? 'En curso'
+                  : 'Bloqueada'
+              }}
+            </span>
+          </div>
+          <p class="badge-desc">{{ badge.description }}</p>
+        </li>
+      </ul>
+    </article>
+  </div>
+</section>

@@ -1,0 +1,148 @@
+<section class="dashboard-ejecutivo">
+  <div *ngIf="loading" class="alert alert-info loading-inline">
+    Cargando dashboard…
+  </div>
+
+  <div *ngIf="!loading && error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error" class="dash-grid">
+    <!-- KPIs -->
+    <section class="kpis">
+      <div class="kpi">
+        <span class="lbl">Depósitos conciliados hoy</span>
+        <b>{{ kpis.depositosHoy }}</b>
+      </div>
+      <div class="kpi">
+        <span class="lbl">Monto cobrado</span>
+        <b>${{ kpis.montoCobrado | number: '1.0-0' }}</b>
+      </div>
+      <div class="kpi">
+        <span class="lbl">Conciliaciones pendientes</span>
+        <b>{{ kpis.concPendientes }}</b>
+      </div>
+      <div class="kpi">
+        <span class="lbl">Ahorradores activos</span>
+        <b>{{ kpis.ahorradoresActivos }}</b>
+      </div>
+    </section>
+
+    <!-- Gráfica semanal -->
+    <article class="card card-chart">
+      <header>
+        <h3>Recaudación últimos 7 días</h3>
+        <p class="muted">
+          Monto conciliado por día (solo abonos conciliados por este ejecutivo).
+        </p>
+      </header>
+
+      <div class="chart-bar" *ngIf="semanaChart.length">
+        <div class="chart-week">
+          <div class="chart-bar__bars">
+            <div
+              class="bar"
+              *ngFor="let d of semanaChart"
+              [style.height.%]="getBarHeight(d.total)"
+            >
+              <span class="bar__value" *ngIf="d.total > 0">
+                ${{ d.total | number: '1.0-0' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Días debajo de cada barra -->
+          <div class="chart-week__xlabels">
+            <div class="xlabel" *ngFor="let d of semanaChart">
+              {{ d.label }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p *ngIf="!semanaChart.length" class="muted">
+        Sin depósitos conciliados aún.
+      </p>
+    </article>
+
+    <!-- Conciliaciones recientes -->
+    <article class="card conc-card">
+      <h3>Conciliaciones recientes</h3>
+      <ul class="conc-list">
+        <li *ngFor="let it of conciliacionesRecientes" class="conc-item">
+          <div class="conc-main">
+            <span class="conc-id">
+              #{{ it.id_abono || it.id || '—' }}
+            </span>
+            <span class="conc-ref">
+              {{ it.referencia || 'Sin referencia' }}
+            </span>
+            <span class="conc-amount">
+              ${{ it.monto_abono | number: '1.2-2' }}
+            </span>
+          </div>
+
+          <span class="chip" [ngClass]="getStatusChipClass(it.status)">
+            {{ (it.status || '—') | titlecase }}
+          </span>
+        </li>
+
+        <li *ngIf="!conciliacionesRecientes.length" class="muted conc-empty">
+          Aún no hay abonos registrados.
+        </li>
+      </ul>
+    </article>
+
+    <!-- Accesos rápidos -->
+    <article class="card quick-links">
+      <h3>Accesos rápidos</h3>
+      <br />
+      <div class="quick-grid">
+        <a routerLink="/pase/bandeja-entrada" class="quick-link">
+          <div class="quick-icon">
+            <i class="fi fi-sr-inbox"></i>
+          </div>
+          <span class="quick-text">Bandeja de entrada</span>
+        </a>
+
+        <a routerLink="/pase/abonos-pendientes" class="quick-link">
+          <div class="quick-icon">
+            <i class="fi fi-sr-time-quarter-to"></i>
+          </div>
+          <span class="quick-text">Abonos pendientes</span>
+        </a>
+
+        <a routerLink="/pase/historial" class="quick-link">
+          <div class="quick-icon">
+            <i class="fi fi-sr-file-invoice-dollar"></i>
+          </div>
+          <span class="quick-text">Historial de abonos</span>
+        </a>
+
+        <a routerLink="/pase/tickets" class="quick-link">
+          <div class="quick-icon">
+            <i class="fi fi-sr-life-ring"></i>
+          </div>
+          <span class="quick-text">Tickets de soporte</span>
+        </a>
+      </div>
+    </article>
+
+    <!-- Notas importantes -->
+    <article class="card notes-card">
+      <h3>Notas importantes</h3>
+
+      <ul class="notes-list">
+        <li *ngFor="let n of notas">
+          <i class="fi fi-sr-info"></i>
+          <span>{{ n }}</span>
+        </li>
+      </ul>
+
+      <p class="muted small">
+        Estas notas se generan automáticamente en función de tus pendientes y
+        actividad reciente.
+      </p>
+    </article>
+  </div>
+</section>

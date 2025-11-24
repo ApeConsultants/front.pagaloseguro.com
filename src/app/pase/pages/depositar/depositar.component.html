@@ -1,0 +1,199 @@
+<section class="depositar">
+  <!-- Loader / Errores -->
+  <div *ngIf="loading" class="alert alert-info loading-inline">Cargando…</div>
+  <div *ngIf="!loading && error" class="panel error">{{ error }}</div>
+
+  <!-- Contenido cuando ya cargó y no hay error -->
+  <ng-container *ngIf="!loading && !error">
+    <!-- ====== TITULOS por vista ====== -->
+    <header class="hero topbar">
+      <div>
+        <!-- SIN ahorro -->
+        <h1 *ngIf="!hasAhorro()">Comienza tu ahorro</h1>
+        <p *ngIf="!hasAhorro()">
+          Registra el monto base que será tu cantidad a depositar por semana.
+        </p>
+
+        <!-- CON ahorro -->
+        <h1 *ngIf="hasAhorro()">Consulta de abonos</h1>
+        <p *ngIf="hasAhorro()">Selecciona la semana a la que quieres abonar.</p>
+      </div>
+    </header>
+
+    <!-- ====== VISTA A: SIN ahorro ====== -->
+    <ng-container *ngIf="!hasAhorro()">
+      <div class="grid one-col">
+        <div class="card resumen">
+          <h3>Registro de ahorro</h3>
+
+          <div class="row">
+            <span class="label">Ciclo</span>
+            <span class="value">{{ cicloActual || "–" }}</span>
+          </div>
+
+          <!-- Campo MONTO BASE (mín. $100, sin límite) -->
+          <label class="field" style="display: block; margin-top: 0.5rem">
+            <span>Monto base</span>
+
+            <div
+              class="amount-field"
+              [class.invalid]="montoBaseNum > 0 && montoBaseNum < 100"
+              [class.valid]="montoBaseNum >= 100"
+            >
+              <span class="prefix" aria-hidden="true">$</span>
+              <input
+                class="amount-input"
+                type="number"
+                min="100"
+                step="1"
+                [(ngModel)]="montoBase"
+                placeholder="100 · 200 · 500 · 1000…"
+                aria-label="Monto base"
+                [attr.aria-invalid]="
+                  montoBaseNum > 0 && montoBaseNum < 100 ? 'true' : 'false'
+                "
+              />
+            </div>
+          </label>
+          <div
+            class="amount-alert"
+            *ngIf="montoBaseNum > 0 && montoBaseNum < 100"
+          >
+            <i class="fi fi-rr-triangle-warning" aria-hidden="true"></i>
+            El monto mínimo es <b>$100</b>.
+          </div>
+
+          <!-- NUEVO: Aceptación de contrato / reglamento -->
+          <label class="checkbox-accept">
+            <input
+              type="checkbox"
+              [(ngModel)]="aceptaReglamento"
+              name="aceptaReglamento"
+            />
+            <span>
+              Estoy de acuerdo con los
+              <a [routerLink]="['/pase/reglamento']">
+                términos y condiciones del presente reglamento </a
+              >.
+            </span>
+          </label>
+          <br />
+
+          <!-- Botón POST crear ahorro -->
+          <button
+            class="btn-primary"
+            [disabled]="
+              creatingAhorro || montoBaseNum < 100 || !aceptaReglamento
+            "
+            (click)="crearAhorro()"
+          >
+            {{ creatingAhorro ? "Generando…" : "Comenzar ahorro" }}
+          </button>
+
+          <!-- NOTA: oculta abonos/penalizaciones -->
+          <ul
+            class="muted"
+            style="
+              margin: 0.5rem 0 0 1rem;
+              padding-left: 1rem;
+              list-style: disc;
+            "
+          ></ul>
+        </div>
+        <!-- No mostrar card de Semanas -->
+      </div>
+    </ng-container>
+
+    <!-- ====== VISTA B: CON ahorro ====== -->
+    <ng-container *ngIf="hasAhorro()">
+      <div class="grid one-col">
+        <!-- Resumen fijo -->
+        <div class="card resumen">
+          <h3>Resumen de tu ahorro</h3>
+          <div class="row">
+            <span class="label">Ciclo</span>
+            <span class="value">{{ cicloActual || "–" }}</span>
+          </div>
+          <div class="row">
+            <span class="label">Monto base</span>
+            <span class="value money"
+              >${{ ahorro?.monto_base || 0 | number : "1.2-2" }}</span
+            >
+          </div>
+          <div class="row">
+            <span class="label">Abonos</span>
+            <span class="value"
+              >${{ ahorro?.abonos || 0 | number : "1.2-2" }}</span
+            >
+          </div>
+          <div class="row">
+            <span class="label">Penalizaciones</span>
+            <span class="value">{{
+              ahorro?.penalizaciones || 0 | number : "1.0-0"
+            }}</span>
+          </div>
+        </div>
+
+        <!-- Tabla de abonos -->
+        <div class="card semanas-card">
+          <h3>Tabla de abonos</h3>
+
+          <div class="notice warn" *ngIf="isSuspended()">
+            Tu cuenta está <b>suspendida</b> por <b>3 atrasos consecutivos</b>.
+            Tus abonos se congelan y no podrás registrar más depósitos en este
+            ciclo. Además, se aplica una
+            <b>penalización equivalente a dos semanas de abono</b>. Al finalizar
+            el ciclo podrás reclamar el dinero disponible.
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Semana</th>
+                  <th>Estatus</th>
+                  <th>Deuda</th>
+                  <th>Abono</th>
+                  <th class="action-col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let s of semanas">
+                  <td>{{ s.semana }}</td>
+                  <td>
+                    <span
+                      class="chip"
+                      [class.ok]="isSemanaOk(s)"
+                      [class.bad]="!isSemanaOk(s)"
+                    >
+                      {{ getEstadoSemanaLabel(s) }}
+                    </span>
+                  </td>
+                  <td>
+                    ${{ s.deuda ?? ahorro?.monto_base ?? 0 | number : "1.2-2" }}
+                  </td>
+                  <td>${{ s.abonos ?? 0 | number : "1.2-2" }}</td>
+                  <td class="action-col">
+                    <button
+                      class="btn-primary btn-table"
+                      [disabled]="!canAbonarSemana(s)"
+                      (click)="depositarSemana(s)"
+                    >
+                      Abonar
+                    </button>
+                  </td>
+                </tr>
+
+                <tr *ngIf="!semanas?.length">
+                  <td colspan="5" class="muted-row">
+                    No hay semanas con adeudo.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+</section>

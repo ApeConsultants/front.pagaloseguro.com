@@ -1,0 +1,63 @@
+<div class="page-container" *ngIf="!loading; else loadTpl">
+  <header class="header">
+    <h1>Gestión de Ciclos</h1>
+  </header>
+
+  <!-- Tarjetas de estado -->
+  <section class="stats">
+    <article class="card">
+      <div class="title">Total de Ciclos</div>
+      <div class="num">{{ totalCount() }}</div>
+    </article>
+    <article class="card ok">
+      <div class="title">Ciclos Activos</div>
+      <div class="num">{{ activosCount() }}</div>
+    </article>
+    <article class="card warn">
+      <div class="title">Por cerrar pronto</div>
+      <div class="num">{{ porCerrarCount() }}</div>
+    </article>
+  </section>
+
+  <!-- Filtros -->
+  <div class="toolbar">
+    <select [ngModel]="estado()" (ngModelChange)="estado.set($event)">
+      <option value="todos">Todos</option>
+      <option value="ABIERTO">Activo</option>
+      <option value="POR_CERRAR">Por cerrar pronto</option>
+      <option value="CERRADO">Cerrado</option>
+    </select>
+    <input placeholder="Buscar ciclo…" [ngModel]="q()" (ngModelChange)="q.set($event)" />
+  </div>
+
+  <!-- Tabla -->
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Fecha de Inicio</th>
+        <th>Fecha de Corte</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let c of list()">
+        <td>{{ c.code || c.nombre || 'Ciclo' }}</td>
+        <td>{{ c.fe_inicio || c.feInicio }}</td>
+        <td>{{ c.fe_fin || c.feFin }}</td>
+        <td>
+          <span class="pill" [class.ok]="(c.status||c.estado)==='ABIERTO'">
+            {{ c.estado || c.status }}
+          </span>
+        </td>
+      </tr>
+      <tr *ngIf="list().length === 0">
+        <td colspan="4" class="empty">Sin resultados</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #loadTpl>
+  <div class="alert alert-info loading-inline">Cargando ciclos…</div>
+</ng-template>

@@ -1,26 +1,156 @@
-<div class="sidebar-container">
-  <div class="logo-container">
-    <img [src]="logoSrc" alt="PagaloSeguro Logo">
+<div class="sidebar-container" [class.collapsed]="!isSidebarOpen">
+  <div class="sidebar-header">
+    <button
+      (click)="toggleSidebar()"
+      class="toggle-btn-closed"
+      *ngIf="!isSidebarOpen"
+      title="Abrir menú"
+    >
+      <i class="fi fi-sr-menu-burger"></i>
+    </button>
+
+    <img *ngIf="isSidebarOpen" [src]="logoSrc" alt="Logo" class="logo" />
+
+    <ng-container *ngIf="isSidebarOpen">
+      <span class="logo-text">Págalo Seguro</span>
+      <button
+        (click)="toggleSidebar()"
+        class="toggle-btn-open"
+        title="Cerrar menú"
+      >
+        <i class="fi fi-sr-angle-left"></i>
+      </button>
+    </ng-container>
   </div>
 
   <nav class="nav-menu">
     <ul>
-      <li>
-        <a 
-          routerLink="/pase" 
-          routerLinkActive="active-link"
-          [routerLinkActiveOptions]="{exact: true}">
-          <span>Dashboard</span>
-        </a>
-      </li>
-      <li>
-        <a 
-          routerLink="/pase/usuarios" 
-          routerLinkActive="active-link">
-          <span>Usuarios</span>
-        </a>
-      </li>
-      
-      </ul>
+      <ng-container *ngIf="userType === 'admin'">
+        <li>
+          <a
+            routerLink="/pase"
+            routerLinkActive="active-link"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <i class="fi fi-sr-dashboard-panel icon-placeholder"></i>
+            <span *ngIf="isSidebarOpen" class="link-text">Tablero</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/pase/ciclos" routerLinkActive="active-link">
+            <i class="fi fi-sr-rotate-right icon-placeholder"></i>
+            <span *ngIf="isSidebarOpen" class="link-text">Ciclos</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/pase/usuarios" routerLinkActive="active-link">
+            <i class="fi fi-sr-users-alt icon-placeholder"></i>
+            <span *ngIf="isSidebarOpen" class="link-text">Usuarios</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/pase/prestamos" routerLinkActive="active-link">
+            <i class="fi fi-sr-handshake-deal-loan icon-placeholder"></i>
+            <span *ngIf="isSidebarOpen" class="link-text">Préstamos</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/pase/grupos" routerLinkActive="active-link">
+            <i class="fi fi-sr-users icon-placeholder"></i>
+            <span *ngIf="isSidebarOpen" class="link-text">Grupos</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/pase/prestamos-grupales" routerLinkActive="active-link">
+            <i class="fi fi-sr-coins icon-placeholder"></i>
+            <span *ngIf="isSidebarOpen" class="link-text">Préstamos Grupales</span>
+          </a>
+        </li>
+      </ng-container>
+
+      <ng-container *ngIf="userType === 'ejecutivo'">
+        <li>
+          <a
+            routerLink="/pase"
+            routerLinkActive="active-link"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <i class="fi fi-sr-dashboard-panel icon-placeholder"></i>
+            <span *ngIf="isSidebarOpen" class="link-text">Tablero</span>
+          </a>
+        </li>
+        <li>
+          <a
+            routerLink="/pase/bandeja-entrada"
+            routerLinkActive="active-link"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <i class="fi fi-sr-inbox-in icon-placeholder"></i>
+            <span *ngIf="isSidebarOpen" class="link-text"
+              >Bandeja de Entrada</span
+            >
+          </a>
+        </li>
+        <li>
+          <a routerLink="abonos-pendientes" routerLinkActive="active-link">
+            <i class="fi fi-sr-clipboard-list-check icon-placeholder"></i>
+            <span *ngIf="isSidebarOpen" class="link-text"
+              >Abonos pendientes</span
+            >
+          </a>
+        </li>
+        <li>
+          <a
+            routerLink="/pase/historial"
+            routerLinkActive="active-link"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <i class="fi fi-sr-time-past icon-placeholder"></i>
+            <span *ngIf="isSidebarOpen" class="link-text">Historial</span>
+          </a>
+        </li>
+      </ng-container>
+    </ul>
   </nav>
+
+  <div class="profile-footer">
+    <div class="profile-avatar">
+      <i class="fi fi-sr-circle-user"></i>
+    </div>
+
+    <div class="profile-info">
+      <span class="profile-name">{{ userName || "Usuario" }}</span>
+      <span class="profile-role">{{ userType | titlecase }}</span>
+    </div>
+
+    <button class="profile-settings" (click)="toggleAjustes()">
+      <i class="fi fi-sr-settings"></i>
+    </button>
+
+    <div *ngIf="isAjustesOpen" class="profile-dropdown-menu">
+      <a
+        *ngIf="userType === 'admin'"
+        routerLink="/pase/perfil-admin"
+        (click)="isAjustesOpen = false"
+      >
+        <i class="fi fi-sr-user-pen"></i> Perfil
+      </a>
+
+      <a
+        *ngIf="userType === 'ejecutivo'"
+        routerLink="/pase/perfil-ejecutivo"
+        (click)="isAjustesOpen = false"
+      >
+        <i class="fi fi-sr-user-pen"></i> Perfil
+      </a>
+
+      <a routerLink="/pase/tickets" (click)="isAjustesOpen = false">
+        <i class="fi fi-sr-life-ring"></i> Tickets
+      </a>
+
+      <button (click)="onLogout()">
+        <i class="fi fi-sr-exit"></i> Cerrar Sesión
+      </button>
+    </div>
+  </div>
 </div>

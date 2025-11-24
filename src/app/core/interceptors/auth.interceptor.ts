@@ -7,7 +7,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = authService.getToken();
   const userId = authService.getUserId();
 
-  if (req.url.includes('/pase/') && token && userId) {
+  const isPublic = req.url.includes('/public/');
+  const needsAuth = (req.url.includes('/pase/') || req.url.includes('/file/'));
+
+  if (!isPublic && needsAuth && token && userId) {
     const clonedReq = req.clone({
       setHeaders: {
         Authorization: `Bearer ${userId} ${token}`

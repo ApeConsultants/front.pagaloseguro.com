@@ -1,14 +1,22 @@
-<div class="pase-layout-container">
-  
-  <app-pase-sidebar class="pase-sidebar"></app-pase-sidebar>
-
-  <main class="pase-main-content">
+<ng-container *ngIf="userType === 'admin' || userType === 'ejecutivo'">
+  <div class="pase-layout-container admin-layout" [class.sidebar-collapsed]="!sidebar.isSidebarOpen">
     
-    <app-pase-header class="pase-header"></app-pase-header>
+    <app-pase-sidebar #sidebar class="pase-sidebar"></app-pase-sidebar>
 
-    <div class="pase-page-content">
+    <main class="pase-main-content">
+      <app-pase-header class="pase-header"></app-pase-header>
+      <div class="pase-page-content">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="userType === 'ahorrador'">
+  <div class="saver-layout-container">
+    <app-saver-header></app-saver-header>
+    <main class="saver-main-content">
       <router-outlet></router-outlet>
-    </div>
-
-  </main>
-</div>
+    </main>
+  </div>
+</ng-container>

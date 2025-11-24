@@ -1,0 +1,72 @@
+<section class="page-container">
+  <header class="header">
+    <h1>Abonos</h1>
+  </header>
+
+  <div class="toolbar">
+    <select
+      [ngModel]="filtroStatus()"
+      (ngModelChange)="filtroStatus.set($event); onStatusChange()"
+    >
+      <option [ngValue]="'TODOS'">Todos</option>
+      <option [ngValue]="'ABIERTO'">Abiertos</option>
+      <option [ngValue]="'PENDIENTE'">Pendientes</option>
+      <option [ngValue]="'CONCILIADO'">Conciliados</option>
+      <option [ngValue]="'RECHAZADO'">Rechazados</option>
+    </select>
+
+    <input
+      type="search"
+      placeholder="Buscar por referencia, concepto, creador…"
+      [ngModel]="filtroTexto()"
+      (ngModelChange)="filtroTexto.set($event)"
+    />
+  </div>
+
+  <div *ngIf="loading" class="alert alert-info">Cargando abonos…</div>
+  <div *ngIf="!loading && error" class="alert alert-danger">{{ error }}</div>
+
+  <table *ngIf="!loading && !error" class="table">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Monto</th>
+        <th>Referencia</th>
+        <th>Concepto</th>
+        <th>Estatus</th>
+        <th>Fecha de creación</th>
+        <th>Creado por</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let r of filtered()">
+        <td class="mono">#{{ r.id_abono }}</td>
+        <td class="money">${{ r.monto_abono | number: '1.2-2' }}</td>
+        <td class="mono">{{ r.referencia || '—' }}</td>
+        <td class="mono">{{ r.concepto || '—' }}</td>
+        <td>
+          <span class="pill" [ngClass]="getStatusPillClass(r.status)">
+            {{ r.status | titlecase }}
+          </span>
+        </td>
+        <td>{{ r.fe_create | date: 'short' }}</td>
+        <td>{{ r.user_create || '—' }}</td>
+        <td class="actions">
+          <div class="btns">
+            <a
+              [routerLink]="['/pase/abonos', r.id_abono]"
+              class="btn btn-primary"
+            >
+              Ver
+            </a>
+          </div>
+        </td>
+      </tr>
+
+      <tr *ngIf="filtered().length === 0">
+        <td colspan="8" class="empty">Sin resultados</td>
+      </tr>
+    </tbody>
+  </table>
+</section>

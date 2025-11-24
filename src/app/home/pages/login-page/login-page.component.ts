@@ -1,28 +1,31 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
+import { DialogService } from '../../../core/services/dialog.service';
 
 @Component({
   selector: 'app-login-page',
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterLink
   ],
   templateUrl: './login-page.component.html',
-  styleUrl: './login-page.component.scss',
+  styleUrls: ['./login-page.component.scss'],
   standalone: true,
 })
 export class LoginPageComponent {
   loginForm: FormGroup;
-  errorMessage: string | null = null; // Para mostrar errores de la API
-  isLoading: boolean = false; // Para deshabilitar el botón
+  isLoading: boolean = false;
+  menuOpen = false;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private dialogService: DialogService
   ) {
     this.loginForm = this.fb.group({
       correo: ['', [Validators.required, Validators.email]],
@@ -37,7 +40,6 @@ export class LoginPageComponent {
     }
 
     this.isLoading = true;
-    this.errorMessage = null;
 
     const credentials = this.loginForm.value;
 
@@ -45,17 +47,23 @@ export class LoginPageComponent {
       next: (response) => {
         this.isLoading = false;
         if (response.status === 'success') {
-          this.router.navigate(['/pase']); // <-- Redirige al dashboard
+          this.router.navigate(['/pase']);
         } else {
-          // Error controlado por la API
-          this.errorMessage = response.msg;
+          this.dialogService.open({
+            title: 'Datos Incorrectos',
+            message: response.msg || 'Usuario o contraseña incorrectos.',
+            type: 'alert' 
+          });
         }
       },
       error: (err) => {
         this.isLoading = false;
-        // Error de red o del servidor
-        this.errorMessage = 'Error de conexión. Inténtalo de nuevo.';
         console.error(err);
+        this.dialogService.open({
+          title: 'Error de Conexión',
+          message: 'No se pudo conectar con el servidor. Inténtalo de nuevo más tarde.',
+          type: 'alert'
+        });
       }
     });
   }

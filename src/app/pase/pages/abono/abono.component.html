@@ -1,0 +1,268 @@
+<section class="abono-page">
+  <!-- Botón regresar (mismo diseño que abono-detail) -->
+  <a *ngIf="currentStep !== 'success'" class="btn-back" (click)="goBack()">
+    <i class="fi fi-sr-angle-left"></i> Regresar
+  </a>
+
+  <!-- Título principal -->
+  <header class="hero">
+    <h1>Realizar abono</h1>
+  </header>
+
+  <!-- Estados globales -->
+  <div
+    *ngIf="currentStep === 'loading'"
+    class="alert alert-info loading-inline"
+  >
+    Cargando datos de la semana...
+  </div>
+
+  <div *ngIf="currentStep === 'error'" class="panel error">
+    {{ error }}
+  </div>
+
+  <!-- STEPPER (Paso 1 y 2) -->
+  <div
+    class="stepper-container"
+    *ngIf="
+      currentStep !== 'loading' &&
+      currentStep !== 'error' &&
+      currentStep !== 'success'
+    "
+  >
+    <!-- ==============================
+         PASO 1: CANTIDAD
+         ============================== -->
+    <div
+      class="step-card"
+      [class.active]="currentStep === 'step1_monto'"
+      [class.moving-out-left]="currentStep === 'step2_evidencia'"
+    >
+      <div class="card abono-card">
+        <h3>Paso 1: Cantidad</h3>
+
+        <!-- Resumen de ciclo y semana dentro de la card -->
+        <div class="summary-details">
+          <div class="row">
+            <span class="label">Ciclo activo</span>
+            <span class="value">{{ ahorro?.code || "—" }}</span>
+          </div>
+          <div class="row">
+            <span class="label">Semana a abonar</span>
+            <span class="value">
+              Semana {{ selectedWeek?.semana || "—" }}
+            </span>
+          </div>
+          <div class="row debt-row">
+            <span class="label">Deuda</span>
+            <span class="value money">
+              ${{ selectedWeek?.deuda ?? 0 | number : "1.2-2" }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Cantidad a abonar -->
+        <label class="field amount-label">
+          <span>Cantidad a abonar</span>
+
+          <div
+            class="amount-field"
+            [class.invalid]="montoAbonar !== null && !montoAbonarValido"
+            [class.valid]="montoAbonarValido"
+          >
+            <span class="prefix" aria-hidden="true">$</span>
+            <input
+              class="amount-input"
+              type="number"
+              min="0"
+              step="1"
+              [(ngModel)]="montoAbonar"
+              placeholder="Ingresa el monto que quieres abonar"
+            />
+          </div>
+        </label>
+
+        <div
+          class="amount-alert"
+          *ngIf="montoAbonar !== null && !montoAbonarValido"
+        >
+          <i class="fi fi-rr-triangle-warning" aria-hidden="true"></i>
+
+          <ng-container *ngIf="montoAbonar <= 0; else excedeDeuda">
+            El abono debe ser mayor a <b>$0.00</b>.
+          </ng-container>
+
+          <ng-template #excedeDeuda>
+            No puedes abonar más de tu deuda:
+            <b>${{ montoMaximoPermitido | number : "1.2-2" }}</b
+            >.
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Botón CONTINUAR (diseño primario) -->
+      <div class="actions-footer right-align">
+        <button
+          type="button"
+          class="btn-primary"
+          [disabled]="!montoAbonarValido"
+          (click)="continuarAbono()"
+        >
+          Continuar
+        </button>
+      </div>
+    </div>
+
+    <!-- ==============================
+         PASO 2: COMPROBANTE Y DATOS
+         ============================== -->
+    <div
+      class="step-card"
+      [class.active]="currentStep === 'step2_evidencia'"
+      [class.moving-in-right]="currentStep === 'step2_evidencia'"
+    >
+      <div class="card abono-card">
+        <h3>Paso 2: Comprobante y datos</h3>
+
+        <!-- Semana / Ciclo / Monto -->
+        <div class="summary-box">
+          <div class="row">
+            <span class="label">Semana</span>
+            <span class="value">{{ selectedWeek?.semana || "—" }}</span>
+          </div>
+          <div class="row">
+            <span class="label">Ciclo</span>
+            <span class="value">{{ ahorro?.code || "—" }}</span>
+          </div>
+          <div class="row">
+            <span class="label">Monto a enviar</span>
+            <span class="value money">
+              ${{ montoAbonar || 0 | number : "1.2-2" }}
+            </span>
+          </div>
+        </div>
+
+        <hr class="divider" />
+
+        <!-- Datos para transferencia -->
+        <div class="beneficiary-info">
+          <div class="row">
+            <span class="label">Beneficiario</span>
+            <span class="value">{{ beneficiario.nombre }}</span>
+          </div>
+          <div class="row">
+            <span class="label">Cuenta CLABE/Tarjeta</span>
+            <span class="value">{{ beneficiario.tarjeta }}</span>
+          </div>
+        </div>
+
+        <hr class="divider" />
+
+        <!-- Campos referencia / concepto -->
+        <div class="form-fields">
+          <label class="field">
+            <span>Referencia de la transacción *</span>
+            <input
+              type="text"
+              [(ngModel)]="referencia"
+              name="referencia"
+              placeholder="Escribe la referencia de tu comprobante"
+              required
+            />
+          </label>
+
+          <label class="field">
+            <span>Concepto de pago *</span>
+            <input
+              type="text"
+              [(ngModel)]="concepto"
+              name="concepto"
+              placeholder="Ej. Abono semanal"
+              required
+            />
+          </label>
+        </div>
+
+        <hr class="divider" />
+
+        <!-- Campo de archivo -->
+        <label class="file-field" for="file-upload">
+          <i class="fi fi-rr-cloud-upload"></i>
+          {{
+            fileEvidencia
+              ? "Cambiar comprobante"
+              : "Subir comprobante (JPG, PNG)"
+          }}
+        </label>
+        <input
+          type="file"
+          id="file-upload"
+          (change)="onFileSelected($event)"
+          accept="image/jpeg, image/png, image/jpg"
+          style="display: none"
+        />
+
+        <!-- PREVIEW de evidencia -->
+        <div *ngIf="filePreview" class="file-preview-box">
+          <img
+            [src]="filePreview"
+            alt="Previsualización de evidencia"
+            class="evidence-img"
+          />
+          <small>
+            Archivo: <b>{{ fileEvidencia?.name }}</b>
+          </small>
+        </div>
+
+        <!-- Validaciones de Paso 2 -->
+        <div class="amount-alert" *ngIf="!datosPaso2Validos">
+          <i class="fi fi-rr-triangle-warning" aria-hidden="true"></i>
+          Es obligatorio adjuntar el comprobante, la referencia y el concepto.
+        </div>
+
+        <!-- Botones dentro de la card (Abonar ejecuta el POST unificado) -->
+        <div class="actions-footer vertical">
+          <button
+            type="button"
+            class="btn-primary"
+            [disabled]="creating || !montoAbonarValido || !datosPaso2Validos"
+            (click)="finalizarAbono()"
+          >
+            {{ creating ? "Procesando abono..." : "Abonar" }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE ÉXITO -->
+  <div class="modal" *ngIf="currentStep === 'success'">
+    <div class="modal-card compact-modal">
+      <header class="modal-header">
+        <h3>¡Abono enviado! ✅</h3>
+        <p class="modal-subtitle">
+          Tu abono se realizó correctamente. Será reflejado una vez que un
+          ejecutivo lo concilie.
+        </p>
+      </header>
+
+      <div class="alert alert-info" style="margin: 1rem 0; text-align: left">
+        <ng-container *ngIf="idAbonoCreado; else sinId">
+          Guardamos tu solicitud con la referencia de abono:
+          <b>#{{ idAbonoCreado }}</b
+          >.
+        </ng-container>
+        <ng-template #sinId>
+          Guardamos tu solicitud de abono correctamente. Podrás verlo en tu
+          historial cuando sea conciliado.
+        </ng-template>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-primary" (click)="confirmSuccess()">
+          Confirmar
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

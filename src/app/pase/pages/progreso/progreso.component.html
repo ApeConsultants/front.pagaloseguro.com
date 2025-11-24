@@ -1,0 +1,309 @@
+<ng-container *ngIf="viewData$ | async as r; else cargando">
+  <div class="progress-grid" style="margin-top: 0.5rem">
+    <section class="col-left">
+      <article class="card hero-streak" style="margin-bottom: 14px">
+        <header
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+          "
+        >
+          <h3>Progreso</h3>
+
+          <div
+            class="actions"
+            *ngIf="r.status === 'success'"
+            style="display: flex; gap: 0.5rem; align-items: center"
+          >
+            <a routerLink="/pase/depositar" class="btn btn-primary abonar">
+              <i class="fi fi-sr-plus"></i> Abonar
+            </a>
+            <div class="options-menu gray" [class.open]="isMenuOpen">
+              <button
+                (click)="toggleMenu()"
+                class="options-btn"
+                aria-label="Más opciones"
+              >
+                <i class="fi fi-sr-menu-dots-vertical"></i>
+              </button>
+              <div *ngIf="isMenuOpen" class="options-dropdown">
+                <a routerLink="/pase/ahorros-anteriores"
+                  >Consultar otros ahorros</a
+                >
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="hero-body">
+          <ng-container
+            *ngIf="
+              r.status === 'success' && r.streakState;
+              else noAhorroTemplate
+            "
+          >
+            <div class="streak-head">
+              <div class="streak-count">
+                <span class="streak-num">{{ r.streakState.count }}</span>
+                <small>semanas</small>
+              </div>
+
+              <i
+                class="fi streak-trophy"
+                [ngClass]="{
+                  'fi-sr-trophy':
+                    !r.streakState.isBroken && !r.streakState.isFinished,
+                  'fi-sr-heart-crack': r.streakState.isBroken,
+                  'fi-sr-flag-checkered': r.streakState.isFinished
+                }"
+              ></i>
+            </div>
+
+            <div class="streak-message-box">
+              <p class="muted" [class.bold-alert]="r.streakState.isBroken">
+                {{ r.streakState.message }}
+                <span class="emoji">{{ r.streakState.msgEmoji }}</span>
+              </p>
+
+              <button
+                *ngIf="r.streakState.isBroken"
+                class="btn btn-sm btn-primary mt-2"
+                style="max-width: 150px"
+                routerLink="/pase/depositar"
+              >
+                Continuar
+              </button>
+
+              <button
+                *ngIf="r.streakState.isFinished"
+                class="btn btn-sm btn-primary mt-2"
+                style="max-width: 150px"
+                (click)="abrirConsultaCiclos()"
+              >
+                Consultar
+              </button>
+            </div>
+          </ng-container>
+
+          <ng-template #noAhorroTemplate>
+            <div class="muted" style="font-size: 0.92rem">
+              Regístrate a un ciclo de ahorro para comenzar 👛
+            </div>
+            <button
+              class="btn btn-primary"
+              style="margin-top: 0.5rem"
+              (click)="abrirRegistro()"
+            >
+              Registrarse
+            </button>
+          </ng-template>
+        </div>
+      </article>
+
+      <article class="card seg-card" style="margin-top: 12px">
+        <header>
+          <h3 class="seg-title">
+            <ng-container
+              *ngIf="r.status === 'success' && r.metaInfo; else segEmpty"
+            >
+              ${{ r.metaInfo.abonos | number : "1.0-0" }} / ${{
+                r.metaInfo.meta | number : "1.0-0"
+              }}
+            </ng-container>
+            <ng-template #segEmpty>No hay ahorro activo… 🔍</ng-template>
+          </h3>
+        </header>
+
+        <ng-container *ngIf="r.status === 'success' && r.metaInfo">
+          <div class="segbar-container">
+            <div class="segbar">
+              <div
+                *ngFor="let s of r.metaInfo.segments"
+                class="seg"
+                [ngClass]="s.class"
+                [style.width.%]="s.width"
+              ></div>
+              <div class="needle" [style.left.%]="r.metaInfo.percent"></div>
+            </div>
+
+            <div class="segbar-legend">
+              <span>
+                <span
+                  *ngFor="let s of r.metaInfo.segments"
+                  class="seg-label-dot"
+                >
+                  <span class="dot" [ngClass]="s.class"></span> {{ s.label }}
+                </span>
+              </span>
+              <span>{{ r.metaInfo.percent }}%</span>
+            </div>
+          </div>
+        </ng-container>
+      </article>
+
+      <article class="card table-card" style="margin-top: 12px">
+        <h3>Historial de Depósitos</h3>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Semana</th>
+                <th>Monto</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngIf="viewData$ | async as r">
+                <ng-container
+                  *ngIf="
+                    r.status === 'success' && r.historialCombinado?.length;
+                    else noAhorroHist
+                  "
+                >
+                  <tr *ngFor="let h of r.historialCombinado">
+                    <td>{{ h.semana }}</td>
+                    <td>${{ h.monto | number : "1.2-2" }}</td>
+                    <td>
+                      <span class="chip" [ngClass]="h.estadoClass">
+                        {{ h.estadoLabel }}
+                      </span>
+                    </td>
+                  </tr>
+                </ng-container>
+
+                <ng-template #noAhorroHist>
+                  <tr>
+                    <td
+                      colspan="3"
+                      class="muted"
+                      style="text-align: center; padding: 2rem"
+                    >
+                      Sin registros…
+                    </td>
+                  </tr>
+                </ng-template>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+<aside class="col-right">
+      <article class="card badges">
+        <header
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+          "
+        >
+          <h3 style="margin: 0">Mis Insignias</h3>
+          <a routerLink="/pase/perfil-saver" class="btn btn-primary eye-btn">
+            <i class="fi fi-sr-eye"></i>
+          </a>
+        </header>
+
+        <div class="badge-grid">
+          <div
+            *ngFor="let b of badges(r)"
+            class="badge"
+            [ngClass]="{ ok: b.unlocked, lock: !b.unlocked }"
+          >
+            <i class="fi fi-sr-badge-check" *ngIf="b.id === 'first'"></i>
+            <i class="fi fi-sr-crown" *ngIf="b.id === 'streak'"></i>
+            <b>
+              {{ b.label }}
+              <small *ngIf="b.id === 'streak'">
+                ({{ b.level }} de {{ b.maxLevel }})</small
+              >
+            </b>
+            <small *ngIf="b.id === 'first'">{{
+              b.unlocked ? "Primer depósito exitoso" : "Bloqueado"
+            }}</small>
+            <small *ngIf="b.id === 'streak'">
+                <ng-container *ngIf="b.level === b.maxLevel">
+                    ¡Nivel máximo de racha alcanzado! 🎉
+                </ng-container>
+                <ng-container *ngIf="b.level < b.maxLevel">
+                    {{ b.unlocked ? 'Mantén tu racha de abono para subir de nivel.' : 'Abonando $'+ (r.ahorro?.monto_base || 0) + ' por semana.' }}
+                </ng-container>
+            </small>
+          </div>
+        </div>
+      </article>
+    </aside>
+  </div>
+  <div class="modal" *ngIf="showEnroll">
+    <div class="modal-card compact-modal">
+      <header class="modal-header">
+        <h3>Unirse a un ciclo</h3>
+        <p class="modal-subtitle">
+          Selecciona el periodo en el que deseas ahorrar.
+        </p>
+      </header>
+      <div class="alert alert-info loading-inline" *ngIf="loadingCiclos">
+        Cargando opciones...
+      </div>
+      <ng-container *ngIf="!loadingCiclos">
+        <div
+          *ngIf="ciclosDisponibles.length; else sinCiclos"
+          class="cycles-list"
+        >
+          <div
+            *ngFor="let c of ciclosDisponibles"
+            class="cycle-option"
+            [class.selected]="selectedCycleCode === c.code"
+            (click)="selectCycle(c.code)"
+          >
+            <div class="radio-indicator">
+              <div
+                class="radio-inner"
+                *ngIf="selectedCycleCode === c.code"
+              ></div>
+            </div>
+            <div class="cycle-info">
+              <span class="cycle-name">Ciclo {{ c.code }}</span>
+              <span class="cycle-dates"
+                >Del {{ c.fe_inicio | date : "dd/MM/yyyy" }} al
+                {{ c.fe_fin | date : "dd/MM/yyyy" }}</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost" (click)="showEnroll = false">
+            Cancelar
+          </button>
+          <button
+            class="btn btn-primary"
+            [disabled]="
+              registering ||
+              !selectedCycleCode ||
+              ciclosDisponibles.length === 0
+            "
+            (click)="registrarmeAlCiclo()"
+          >
+            {{ registering ? "Registrando..." : "Confirmar inscripción" }}
+          </button>
+        </div>
+        <ng-template #sinCiclos>
+          <div class="empty-state">
+            <p class="muted">No hay ciclos disponibles.</p>
+            <button class="btn btn-ghost" (click)="showEnroll = false">
+              Cerrar
+            </button>
+          </div>
+        </ng-template>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #cargando>
+  <div class="alert alert-info loading-inline">Cargando Avance...</div>
+</ng-template>
