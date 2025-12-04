@@ -93,9 +93,8 @@
   color: var(--primary-color);
 }
 
-/* Iconos específicos para estados lógicos */
-.fi-sr-heart-crack { color: #ef4444; } /* Rojo para racha rota */
-.fi-sr-flag-checkered { color: #eab308; } /* Amarillo para fin ciclo */
+.fi-sr-heart-crack { color: #ef4444; }
+.fi-sr-flag-checkered { color: #eab308; }
 
 .streak-message-box {
   margin-top: 0.5rem;
@@ -113,7 +112,6 @@
 
   .emoji { font-size: 1.1rem; }
   
-  /* Margen para separar el botón de Continuar/Consultar del texto */
   .mt-2 { margin-top: 0.75rem; display: inline-block; }
 }
 
@@ -138,7 +136,6 @@
 
   .seg { font-size: 0; transition: width 0.3s ease; }
   
-  /* Colores de Segmentos */
   .seg-abono { background: #22c55e; }
   .seg-penal { background: #ef4444; }
 

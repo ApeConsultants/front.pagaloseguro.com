@@ -89,7 +89,7 @@ export class PaseProgressPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.userId = this.auth.getUserId();
-    // Seleccionar frase aleatoria al inicio
+
     this.randomPhrase =
       this.motivationalPhrases[
         Math.floor(Math.random() * this.motivationalPhrases.length)
@@ -98,7 +98,6 @@ export class PaseProgressPageComponent implements OnInit {
     this.viewData$ = this.ciclos.getListaCiclos().pipe(
       take(1),
       switchMap((resCiclos) => {
-        // 1. Validar ciclo y usuario
         if (
           resCiclos.status === 'success' &&
           resCiclos.data?.actual &&
@@ -107,7 +106,6 @@ export class PaseProgressPageComponent implements OnInit {
           const cicloActual = resCiclos.data.actual.code;
           const uid = Number(this.userId);
 
-          // 2. Consultas en paralelo (forkJoin)
           return forkJoin({
             ahorroRes: this.ahorros
               .getAhorro(uid, cicloActual)
@@ -129,13 +127,13 @@ export class PaseProgressPageComponent implements OnInit {
                 ? semanasRes.data
                 : [];
 
-              // --- Racha: ahora se basa en ahorroData.racha + semanas de adeudo ---
+              // --- Racha ---
               const streakCalc = this.calculateStreak(ahorroData, semanasData);
 
               // --- Barra segmentada ---
               const metaInfo = this.calculateSegments(ahorroData);
 
-              // --- Historial unificado (usa ahorro.semanas + semanasAdeudo) ---
+              // --- Historial unificado ---
               const historial = this.processHistory(
                 ahorroData.semanas,
                 semanasData
@@ -211,13 +209,13 @@ export class PaseProgressPageComponent implements OnInit {
 
   private calculateSegments(data: any): any {
     const abonos = Number(data.abonos ?? 0);
-    const meta = Number(data.meta ?? 1); // Evitar div por 0
+    const meta = Number(data.meta ?? 1);
     const penalizaciones = Number(data.penalizaciones ?? 0);
-    // Puedes agregar prestamos aqui si se requiere en el futuro
+    // Agregar prestamos aqui si se requiere en el futuro
 
     const percent = Math.min(100, Math.round((abonos / meta) * 100));
 
-    // Cálculos de ancho para la barra (simple rule of three)
+    // Cálculos de ancho para la barra
     const wAbonos = Math.min(100, (abonos / meta) * 100);
     const wPenal = Math.min(100, (penalizaciones / meta) * 100);
 
@@ -323,19 +321,16 @@ export class PaseProgressPageComponent implements OnInit {
     return filtradas;
   }
 
-  // ===== Lógica de Insignias (ACTUALIZADA con lógica Duolingo) =====
+  // ===== Lógica de Insignias =====
   badges(r: ProgressViewData): Badge[] {
     if (r.status !== 'success' || !r.streakState) return [];
 
-    // La racha actual CONTINUA que ha mantenido el usuario
     const w = r.streakState.count;
     const hasFirstDeposit = (r.metaInfo?.abonos ?? 0) > 0;
 
-    // NUEVOS UMBRALES: Basado en niveles de 4 semanas (12 niveles * 4 semanas = 48 semanas)
     const MAX_LEVEL = 12;
     const WEEKS_PER_LEVEL = 4;
 
-    // Nivel alcanzado (ej. 7 si logró 7 * 4 = 28 semanas)
     const currentStreakLevel = Math.floor(w / WEEKS_PER_LEVEL);
 
     const levels = [
@@ -347,7 +342,6 @@ export class PaseProgressPageComponent implements OnInit {
       if (id === 'first') return hasFirstDeposit ? 1 : 0;
 
       if (id === 'streak') {
-        // El nivel alcanzado es el mínimo entre el nivel calculado por semanas y el máximo permitido
         return Math.min(currentStreakLevel, MAX_LEVEL);
       }
       return 0;
@@ -358,9 +352,8 @@ export class PaseProgressPageComponent implements OnInit {
 
       return {
         id: l.id,
-        // REQUERIMIENTO: La etiqueta de la racha siempre es "Racha de 4" (el hito base)
         label: l.id === 'streak' ? `${l.label} de ${WEEKS_PER_LEVEL}` : l.label,
-        level: lvl, // Nivel alcanzado (0 a 12)
+        level: lvl,
         maxLevel: MAX_LEVEL,
         unlocked: lvl > 0,
       };
@@ -391,9 +384,7 @@ export class PaseProgressPageComponent implements OnInit {
     });
   }
 
-  // Se reutiliza la lógica de "Consultar" para que abra el mismo modal o navegue
   abrirConsultaCiclos(): void {
-    // Req 2: Botón "Consultar" al finalizar ciclo
     this.abrirRegistro();
   }
 
@@ -401,7 +392,6 @@ export class PaseProgressPageComponent implements OnInit {
     if (!this.userId || !this.selectedCycleCode) return;
     this.registering = true;
     const servicio: any = this.ciclos as any;
-    // Ajusta si tu servicio tiene el método tipado correctamente
     if (typeof servicio.registrarUsuarioEnCiclo === 'function') {
       servicio
         .registrarUsuarioEnCiclo(this.userId, this.selectedCycleCode)

@@ -282,7 +282,6 @@ export class DashboardAdminComponent implements OnInit {
     if (low === 'ejecutivo') return 'Ejecutivo';
     if (low === 'ahorrador') return 'Ahorrador';
 
-    // Capitaliza genérico
     return r.charAt(0).toUpperCase() + r.slice(1);
   }
 
@@ -346,7 +345,7 @@ export class DashboardAdminComponent implements OnInit {
       .slice(0, 10); // top 10
   }
 
-  /** Actividad reciente, usando usuario_conciliacion y fe_conciliacion. */
+  /** Actividad reciente */
   private buildActividadesRecientes(abonosArr: any[]): void {
     const items: ActividadReciente[] = [];
 

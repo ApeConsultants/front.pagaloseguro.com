@@ -1,5 +1,4 @@
 <section class="abono-page">
-  <!-- Botón regresar (mismo diseño que abono-detail) -->
   <a *ngIf="currentStep !== 'success'" class="btn-back" (click)="goBack()">
     <i class="fi fi-sr-angle-left"></i> Regresar
   </a>
@@ -40,8 +39,6 @@
     >
       <div class="card abono-card">
         <h3>Paso 1: Cantidad</h3>
-
-        <!-- Resumen de ciclo y semana dentro de la card -->
         <div class="summary-details">
           <div class="row">
             <span class="label">Ciclo activo</span>
@@ -100,7 +97,7 @@
         </div>
       </div>
 
-      <!-- Botón CONTINUAR (diseño primario) -->
+      <!-- Botón CONTINUAR -->
       <div class="actions-footer right-align">
         <button
           type="button"
@@ -220,7 +217,7 @@
           Es obligatorio adjuntar el comprobante, la referencia y el concepto.
         </div>
 
-        <!-- Botones dentro de la card (Abonar ejecuta el POST unificado) -->
+        <!-- Botones dentro de la card -->
         <div class="actions-footer vertical">
           <button
             type="button"

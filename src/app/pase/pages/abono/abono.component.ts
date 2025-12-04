@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap, of, catchError } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { CicloService } from '../../../core/services/ciclo.service';
@@ -18,7 +18,7 @@ type AbonoStep =
 @Component({
   selector: 'app-abono',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './abono.component.html',
   styleUrls: ['./abono.component.scss'],
 })
@@ -115,7 +115,6 @@ export class AbonoComponent implements OnInit {
             (s: any) => s.id_semana === this.idSemana
           );
 
-          // AHORA permitimos ABIERTO y CERRADO
           const allowedStatuses = ['ABIERTO', 'CERRADO'];
           if (
             !this.selectedWeek ||
@@ -131,7 +130,7 @@ export class AbonoComponent implements OnInit {
           this.montoAbonar = Number(
             this.selectedWeek.deuda ?? this.ahorro.monto_base
           );
-          this.currentStep = 'step1_monto'; // Iniciar flujo
+          this.currentStep = 'step1_monto';
         },
         error: (e) => {
           console.error(e);
@@ -192,9 +191,7 @@ export class AbonoComponent implements OnInit {
       this.goToStep('step1_monto');
       this.fileEvidencia = null;
       this.filePreview = null;
-      // referencia / concepto se conservan
     } else {
-      // Para step1_monto, loading, error, etc.
       this.router.navigate(['/pase/depositar']);
     }
   }
@@ -222,7 +219,7 @@ export class AbonoComponent implements OnInit {
     }
   }
 
-  // Botón "Abonar" (Ejecuta POST Abrir Abono y POST Subir Evidencia)
+  // Botón "Abonar"
   async finalizarAbono(): Promise<void> {
     if (!this.montoAbonarValido || !this.datosPaso2Validos) {
       this.error =
@@ -263,15 +260,12 @@ export class AbonoComponent implements OnInit {
         throw new Error(backendMsg || 'Error al crear la solicitud de abono.');
       }
 
-      // Si el backend mandó id, lo usamos; si no, no pasa nada
       this.idAbonoCreado =
         abonoRes?.data?.id_abono ?? abonoRes?.id_abono ?? null;
 
       // 3. Mostrar modal de éxito
       this.goToStep('success');
 
-      // Si en lugar de modal quisieras redirigir directo, podrías hacer:
-      // this.router.navigate(['/pase']);
     } catch (e: any) {
       console.error('Error durante el proceso de abono:', e);
       this.error =

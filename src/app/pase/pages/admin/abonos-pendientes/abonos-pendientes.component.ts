@@ -76,7 +76,6 @@ export class AbonosPendientesComponent implements OnInit {
     this.load();
   }
 
-  /** Clase CSS para el color del status */
   getStatusPillClass(status: string): string {
     switch (status) {
       case 'CONCILIADO':

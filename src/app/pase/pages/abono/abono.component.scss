@@ -10,7 +10,7 @@ $primary: #4f46e5;
   padding-bottom: 48px;
 }
 
-/* Header + título (igual estilo hero) */
+/* Header + título */
 .hero {
   margin-bottom: 16px;
 
@@ -20,7 +20,7 @@ $primary: #4f46e5;
   }
 }
 
-/* Botón regresar (mismo diseño que abono-detail .btn-back) */
+/* Botón regresar */
 .btn-back {
   @extend .ButtonConfig;
   display: inline-flex;
@@ -52,7 +52,7 @@ $primary: #4f46e5;
   }
 }
 
-/* Cards (reutilizamos diseño de abono-detail) */
+/* Cards */
 .card {
   background: #fff;
   border: 1px solid #e5e7eb;
@@ -200,7 +200,6 @@ $primary: #4f46e5;
 
 /* ==========================
    CAMPO: Cantidad a abonar
-   (mismo estilo que Monto base)
    ========================== */
 .amount-label span {
   display: block;
@@ -254,7 +253,6 @@ $primary: #4f46e5;
   color: #0f172a;
 }
 
-/* Quitar flechas de number */
 .amount-input::-webkit-outer-spin-button,
 .amount-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -265,7 +263,7 @@ $primary: #4f46e5;
   -moz-appearance: textfield;
 }
 
-/* Alerta de validación (igual que depositar) */
+/* Alerta de validación */
 .amount-alert {
   display: flex;
   align-items: center;

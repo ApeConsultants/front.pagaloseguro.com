@@ -82,8 +82,6 @@
   box-shadow: 0 5px 15px rgba($verde, 0.3);
 }
 
-/* .btn-deposit-main .arrow  <-- ya no usamos el <span class="arrow"> */
-
 /* ===== Widgets ===== */
 .widgets-column { display: flex; flex-direction: column; gap: 1.5rem; }
 
@@ -165,7 +163,7 @@
 
 /* ===== Próximo corte ===== */
 .cutoff-card header h4{
-  font-size: 1.25rem; line-height: 1.2; margin: 0 0 .5rem 0; /* texto más grande */
+  font-size: 1.25rem; line-height: 1.2; margin: 0 0 .5rem 0;
 }
 
 .cutoff-card .cutoff-body{
@@ -181,8 +179,6 @@
 }
 
 .cutoff-icon i { font-size: 32px; line-height: .8; }
-
-/* separación + grises para hora/desc */
 .cutoff-card .cutoff-text .corte-fecha{ margin: 0 0 4px 0; }
 .cutoff-card .cutoff-text .corte-hora{ margin: 0 0 8px 0; color:#6b7280; }
 .cutoff-card .cutoff-text .corte-desc{ margin: 0; color:#64748b; }
