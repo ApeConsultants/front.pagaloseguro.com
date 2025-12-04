@@ -1,7 +1,123 @@
 <div class="page-container" *ngIf="!loading; else loadTpl">
   <header class="header">
     <h1>Gestión de Ciclos</h1>
+
+    <button
+      type="button"
+      class="btn-primary"
+      (click)="onCrearClick()"
+      *ngIf="!createMode()"
+    >
+      <i class="fi fi-sr-add"></i>
+      <span>Crear ciclo</span>
+    </button>
   </header>
+
+  <!-- PANEL CREAR CICLO -->
+  <section class="create-panel" *ngIf="createMode()">
+    <article class="card create-card">
+      <div class="create-header">
+        <div>
+          <h2>Crear nuevo ciclo</h2>
+          <p class="muted">
+            Define el código del ciclo y selecciona una fecha de inicio
+            disponible.
+          </p>
+        </div>
+      </div>
+
+      <div class="create-form">
+        <!-- Código -->
+        <div class="field">
+          <label for="code">Código de ciclo</label>
+          <input
+            id="code"
+            type="text"
+            [ngModel]="nuevoCode()"
+            (ngModelChange)="nuevoCode.set($event)"
+            placeholder="Ej. 2026"
+          />
+          <small class="muted small">
+            Usualmente corresponde al año del ciclo
+          </small>
+        </div>
+
+        <!-- Fechas de inicio -->
+        <div class="field">
+          <label>Fecha de inicio del ciclo</label>
+
+          <div *ngIf="createLoading(); else fechasTpl" class="muted small">
+            Cargando fechas disponibles…
+          </div>
+
+          <ng-template #fechasTpl>
+            <div
+              class="fe-grid"
+              *ngIf="opcionesFeInicio().length; else sinFeTpl"
+            >
+              <label
+                class="fe-option"
+                *ngFor="let op of opcionesFeInicio()"
+              >
+                <input
+                  type="radio"
+                  name="feInicio"
+                  [value]="op.feInicio"
+                  [ngModel]="nuevoFeInicio()"
+                  (ngModelChange)="nuevoFeInicio.set($event)"
+                />
+                <div class="fe-body">
+                  <span class="fe-main">
+                    {{ op.feInicio | date: 'dd/MM/yyyy' }}
+                  </span>
+                  <span class="fe-sub">
+                    Termina {{ op.feFin | date: 'dd/MM/yyyy' }}
+                  </span>
+                </div>
+              </label>
+            </div>
+
+            <ng-template #sinFeTpl>
+              <div class="muted small">
+                No hay fechas disponibles para crear un nuevo ciclo.
+              </div>
+            </ng-template>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Error de creación -->
+      <div
+        *ngIf="createError()"
+        class="alert alert-danger small"
+        style="margin-top: 0.75rem"
+      >
+        {{ createError() }}
+      </div>
+
+      <!-- Botones -->
+      <div class="create-actions">
+        <button
+          type="button"
+          class="btn-ghost"
+          (click)="onCancelarCrear()"
+          [disabled]="creating()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn-primary"
+          (click)="onSubmitCrear()"
+          [disabled]="
+            creating() || !nuevoCode().trim() || !nuevoFeInicio()
+          "
+        >
+          {{ creating() ? 'Creando ciclo…' : 'Crear ciclo' }}
+        </button>
+      </div>
+    </article>
+  </section>
 
   <!-- Tarjetas de estado -->
   <section class="stats">
@@ -27,7 +143,11 @@
       <option value="POR_CERRAR">Por cerrar pronto</option>
       <option value="CERRADO">Cerrado</option>
     </select>
-    <input placeholder="Buscar ciclo…" [ngModel]="q()" (ngModelChange)="q.set($event)" />
+    <input
+      placeholder="Buscar ciclo…"
+      [ngModel]="q()"
+      (ngModelChange)="q.set($event)"
+    />
   </div>
 
   <!-- Tabla -->
@@ -46,7 +166,7 @@
         <td>{{ c.fe_inicio || c.feInicio }}</td>
         <td>{{ c.fe_fin || c.feFin }}</td>
         <td>
-          <span class="pill" [class.ok]="(c.status||c.estado)==='ABIERTO'">
+          <span class="pill" [class.ok]="(c.status || c.estado) === 'ABIERTO'">
             {{ c.estado || c.status }}
           </span>
         </td>

@@ -1,6 +1,6 @@
 <ng-container *ngIf="ahorroData$ | async as response; else loading">
 
-  <!-- VISTA 2: Usuario YA vinculado (success) -->
+  <!-- VISTA 2: Usuario YA vinculado -->
   <ng-container *ngIf="response.status === 'success' && response.data as data; else notLinked">
     <div class="home-grid">
 
@@ -72,7 +72,7 @@
     </div>
   </ng-container>
 
-  <!-- VISTA 1: Usuario SIN vincular (no_cycle | no_ahorro) => tarjeta + subpantalla en esta ruta -->
+  <!-- VISTA 1: Usuario SIN vincular  -->
   <ng-template #notLinked>
     <div class="widget-card">
       <h4>Sin ahorro activo 💸.</h4>

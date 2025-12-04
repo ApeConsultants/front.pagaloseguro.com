@@ -13,7 +13,7 @@
 }
 
 .grid { display:grid; gap:16px; }
-.grid.one-col { grid-template-columns: 1fr; } /* siempre vertical */
+.grid.one-col { grid-template-columns: 1fr; }
 
 .card {
   background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:16px;
@@ -30,7 +30,7 @@
 .semanas-card .table-scroll{
   max-height: clamp(320px, 52vh, 640px);
   overflow: auto;
-  padding-right: 6px;          /* deja espacio para scroll */
+  padding-right: 6px;
 }
 .semanas-card thead th { position: sticky; top: 0; background:#fff; }
 
@@ -60,8 +60,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #f8fafc;                /* slate-50 */
-  border: 1px solid #e5e7eb;          /* gray-200 */
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 12px 14px;
   margin-top: .8rem;
@@ -70,12 +70,12 @@
 
 
   &.invalid{
-    border-color: #fca5a5;            /* red-300 */
+    border-color: #fca5a5;
     box-shadow: 0 0 0 3px rgba(248,113,113,.15);
   }
 
   &.valid{
-    border-color: #86efac;            /* green-300 */
+    border-color: #86efac;
     box-shadow: 0 0 0 3px rgba(34,197,94,.12);
   }
 }
@@ -85,8 +85,8 @@
   place-items: center;
   width: 36px;
   height: 36px;
-  border-radius: 10px;             /* indigo-50 */
-  color: #1f2937;                      /* gray-800 */
+  border-radius: 10px;
+  color: #1f2937;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
@@ -102,10 +102,8 @@
   color: #0f172a;
 }
 
-/* Quitar flechas del input number (Chrome/Edge/Safari) */
 .amount-input::-webkit-outer-spin-button,
 .amount-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-/* Firefox */
 .amount-input[type="number"] { -moz-appearance: textfield; }
 
 /* ===== Alerta de validación ===== */
@@ -116,8 +114,8 @@
   margin: 8px 0 10px;
   padding: 10px 12px;
   border-radius: 10px;
-  background: #fff7ed;                 /* orange-50 */
-  color: #9a3412;                       /* orange-800 */
+  background: #fff7ed;
+  color: #9a3412;
   font-weight: 600;
 }
 
@@ -131,7 +129,7 @@
 }
 
 /* ==========================
-   TABLA
+                TABLA
    ========================== */
 
 .semanas-card {

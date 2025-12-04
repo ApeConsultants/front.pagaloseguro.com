@@ -45,7 +45,6 @@ export class PaseHomePageComponent implements OnInit {
         ) {
           const cicloActual = ciclosResponse.data.actual.code;
 
-          // 👉 Ahora solo usamos GET /pase/ahorro (que ya trae "racha")
           return this.ahorroService
             .getAhorro(Number(this.userId), cicloActual)
             .pipe(

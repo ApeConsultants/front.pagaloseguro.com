@@ -49,6 +49,15 @@
           </a>
         </li>
         <li>
+          <a routerLink="abonos-pendientes" routerLinkActive="active-link">
+            <i class="fi fi-sr-clipboard-list-check icon-placeholder"></i>
+            <span *ngIf="isSidebarOpen" class="link-text"
+              >Abonos pendientes</span
+            >
+          </a>
+        </li>
+        <!--
+        <li>
           <a routerLink="/pase/prestamos" routerLinkActive="active-link">
             <i class="fi fi-sr-handshake-deal-loan icon-placeholder"></i>
             <span *ngIf="isSidebarOpen" class="link-text">Préstamos</span>
@@ -66,49 +75,38 @@
             <span *ngIf="isSidebarOpen" class="link-text">Préstamos Grupales</span>
           </a>
         </li>
+        -->
       </ng-container>
 
       <ng-container *ngIf="userType === 'ejecutivo'">
         <li>
-          <a
-            routerLink="/pase"
-            routerLinkActive="active-link"
-            [routerLinkActiveOptions]="{ exact: true }"
-          >
+          <a routerLink="/pase" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
             <i class="fi fi-sr-dashboard-panel icon-placeholder"></i>
             <span *ngIf="isSidebarOpen" class="link-text">Tablero</span>
           </a>
         </li>
+        <!--
         <li>
-          <a
-            routerLink="/pase/bandeja-entrada"
-            routerLinkActive="active-link"
-            [routerLinkActiveOptions]="{ exact: true }"
-          >
-            <i class="fi fi-sr-inbox-in icon-placeholder"></i>
-            <span *ngIf="isSidebarOpen" class="link-text"
-              >Bandeja de Entrada</span
-            >
+          <a routerLink="/pase/bandeja-entrada" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+            <i class="fi fi-sr-inbox icon-placeholder"></i>
+            <span *ngIf="isSidebarOpen" class="link-text">Bandeja de Entrada</span>
           </a>
         </li>
+        -->
         <li>
           <a routerLink="abonos-pendientes" routerLinkActive="active-link">
             <i class="fi fi-sr-clipboard-list-check icon-placeholder"></i>
-            <span *ngIf="isSidebarOpen" class="link-text"
-              >Abonos pendientes</span
-            >
+            <span *ngIf="isSidebarOpen" class="link-text">Abonos pendientes</span>
           </a>
         </li>
+        <!--
         <li>
-          <a
-            routerLink="/pase/historial"
-            routerLinkActive="active-link"
-            [routerLinkActiveOptions]="{ exact: true }"
-          >
+          <a routerLink="/pase/historial" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
             <i class="fi fi-sr-time-past icon-placeholder"></i>
             <span *ngIf="isSidebarOpen" class="link-text">Historial</span>
           </a>
         </li>
+        -->
       </ng-container>
     </ul>
   </nav>

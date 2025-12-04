@@ -3,7 +3,6 @@
   <div *ngIf="loading" class="alert alert-info loading-inline">Cargando…</div>
   <div *ngIf="!loading && error" class="panel error">{{ error }}</div>
 
-  <!-- Contenido cuando ya cargó y no hay error -->
   <ng-container *ngIf="!loading && !error">
     <!-- ====== TITULOS por vista ====== -->
     <header class="hero topbar">
@@ -63,7 +62,7 @@
             El monto mínimo es <b>$100</b>.
           </div>
 
-          <!-- NUEVO: Aceptación de contrato / reglamento -->
+          <!-- Aceptación de contrato / reglamento -->
           <label class="checkbox-accept">
             <input
               type="checkbox"
@@ -100,7 +99,6 @@
             "
           ></ul>
         </div>
-        <!-- No mostrar card de Semanas -->
       </div>
     </ng-container>
 

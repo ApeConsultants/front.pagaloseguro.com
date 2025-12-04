@@ -19,7 +19,7 @@ export class DepositarComponent implements OnInit {
   userId: string | null = null;
   cicloActual: string | null = null;
 
-  ahorro: any = null; // null => SIN ahorro
+  ahorro: any = null;
   semanas: any[] = [];
   selectedSemana: number | null = null;
 
@@ -54,7 +54,6 @@ export class DepositarComponent implements OnInit {
       return;
     }
 
-    // 1) ciclo actual
     this.ciclos.getListaCiclos().subscribe({
       next: (cx) => {
         this.cicloActual = cx?.data?.actual?.code ?? null;
@@ -63,13 +62,11 @@ export class DepositarComponent implements OnInit {
           return;
         }
 
-        // 2) ahorro del usuario
         this.ahorroSrv
           .getAhorro(Number(this.userId), this.cicloActual)
           .subscribe({
             next: (ah) => {
               const d = ah?.data;
-              // Solo cuenta como CON ahorro si existe id_ahorro numérico > 0
               const tieneAhorro =
                 ah?.status === 'success' &&
                 d &&
@@ -81,7 +78,7 @@ export class DepositarComponent implements OnInit {
                 this.loadSemanas();
               } else {
                 this.ahorro = null;
-                this.loading = false; // vista SIN ahorro
+                this.loading = false;
               }
             },
             error: () => {
@@ -112,7 +109,6 @@ export class DepositarComponent implements OnInit {
       next: (sx) => {
         const base = Array.isArray(sx?.data) ? sx.data : [];
 
-        // Tomamos las semanas del ahorro (aquí sí viene id_semana)
         let semanasAhorro: any[] = [];
         if (this.ahorro?.semanas) {
           const actual = this.ahorro.semanas.actual;
@@ -122,7 +118,6 @@ export class DepositarComponent implements OnInit {
           semanasAhorro = [actual, ...anteriores].filter((s) => !!s);
         }
 
-        // Fusionamos por número de semana: semana === semana
         this.semanas = base.map((s: any) => {
           const match = semanasAhorro.find((w: any) => w.semana === s.semana);
           return {
@@ -144,14 +139,13 @@ export class DepositarComponent implements OnInit {
     });
   }
 
-  // ====== Crear ahorro (POST) y redirigir a /pase
+  // ====== Crear ahorro y redirigir a /pase
   crearAhorro(): void {
     if (!this.userId || !this.cicloActual) return;
 
     const monto = Number(this.montoBase ?? 0);
     if (isNaN(monto) || monto < 100) return;
 
-    // Nueva validación: debe aceptar el reglamento
     if (!this.aceptaReglamento) {
       this.error =
         'Debes aceptar los términos y condiciones del reglamento para comenzar tu ahorro.';
@@ -204,12 +198,10 @@ export class DepositarComponent implements OnInit {
     const deuda = Number(s.deuda ?? 0);
 
     if (s.status === 'ABIERTO') {
-      // Semana actual o futura sin cubrir -> Pendiente
       return 'ABIERTO';
     }
 
     if (s.status === 'CERRADO') {
-      // Req 3
       if (abonos > 0 && abonos < deuda) {
         return 'ABONO INCOMPLETO';
       }
@@ -224,9 +216,7 @@ export class DepositarComponent implements OnInit {
     return s.status || '—';
   }
 
-  /** Para decidir si pintamos el chip en verde o rojo */
   isSemanaOk(s: any): boolean {
-    // Verde sólo para semana PENDIENTE (ABIERTO)
     return s.status === 'ABIERTO';
   }
 
@@ -237,7 +227,6 @@ export class DepositarComponent implements OnInit {
     const deuda = Number(s.deuda ?? 0);
     if (isNaN(deuda) || deuda <= 0) return false;
 
-    // Req 2: permitir abonar también a semanas CERRADO con adeudo
     return s.status === 'ABIERTO' || s.status === 'CERRADO';
   }
 

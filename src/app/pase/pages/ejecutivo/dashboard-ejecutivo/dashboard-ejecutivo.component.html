@@ -31,9 +31,9 @@
     <!-- Gráfica semanal -->
     <article class="card card-chart">
       <header>
-        <h3>Recaudación últimos 7 días</h3>
+        <h3>Recaudación - Últimos 7 días</h3>
         <p class="muted">
-          Monto conciliado por día (solo abonos conciliados por este ejecutivo).
+          Monto conciliado por día.
         </p>
       </header>
 
@@ -80,6 +80,9 @@
             <span class="conc-amount">
               ${{ it.monto_abono | number: '1.2-2' }}
             </span>
+            <span class="conc-date small">
+              {{ formatFeConciliacion(it.fe_conciliacion) }}
+            </span>
           </div>
 
           <span class="chip" [ngClass]="getStatusChipClass(it.status)">
@@ -107,7 +110,7 @@
 
         <a routerLink="/pase/abonos-pendientes" class="quick-link">
           <div class="quick-icon">
-            <i class="fi fi-sr-time-quarter-to"></i>
+            <i class="fi fi-sr-clipboard-list-check"></i>
           </div>
           <span class="quick-text">Abonos pendientes</span>
         </a>
@@ -138,11 +141,6 @@
           <span>{{ n }}</span>
         </li>
       </ul>
-
-      <p class="muted small">
-        Estas notas se generan automáticamente en función de tus pendientes y
-        actividad reciente.
-      </p>
     </article>
   </div>
 </section>

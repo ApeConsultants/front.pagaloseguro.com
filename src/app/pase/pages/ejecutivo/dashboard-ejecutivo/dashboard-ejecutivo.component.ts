@@ -40,15 +40,12 @@ export class DashboardEjecutivoComponent implements OnInit {
   conciliacionesRecientes: any[] = [];
   notas: string[] = [];
 
-  private userName: string | null = null;
-
   constructor(
     private abonosService: AbonosService,
     private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.userName = this.authService.getUserName();
     this.load();
   }
 
@@ -62,7 +59,6 @@ export class DashboardEjecutivoComponent implements OnInit {
       .subscribe({
         next: (res) => {
           const abonosArr = Array.isArray(res?.data) ? res.data : [];
-
           this.processAbonos(abonosArr);
           this.buildNotas();
           this.loading = false;
@@ -74,35 +70,37 @@ export class DashboardEjecutivoComponent implements OnInit {
       });
   }
 
+  private formatDateKey(d: Date): string {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
   private processAbonos(abonos: any[]): void {
-    const todayStr = new Date().toISOString().slice(0, 10);
+    const todayStr = this.formatDateKey(new Date());
     const dayTotals: Record<string, number> = {};
     const ahorradores = new Set<string>();
 
     let depositosHoy = 0;
-    let montoCobrado = 0;
+    let montoHoy = 0;
     let concPendientes = 0;
 
     abonos.forEach((a: any) => {
       const status = (a.status || '').toUpperCase();
-      const fechaBase = a.fe_conciliacion || a.fe_create;
-      const dia = typeof fechaBase === 'string' ? fechaBase.slice(0, 10) : null;
+      const concDia =
+        typeof a.fe_conciliacion === 'string'
+          ? a.fe_conciliacion.slice(0, 10)
+          : null;
       const monto = Number(a.monto_abono || 0);
 
-      const esDelEjecutivo =
-        !this.userName || a.usuario_conciliacion === this.userName;
-
-      const esConciliadoDelExec = status === 'CONCILIADO' && esDelEjecutivo;
-
-      if (dia === todayStr && esConciliadoDelExec) {
+      if (status === 'CONCILIADO' && concDia === todayStr) {
         depositosHoy++;
+        montoHoy += monto;
       }
 
-      if (esConciliadoDelExec) {
-        montoCobrado += monto;
-        if (dia) {
-          dayTotals[dia] = (dayTotals[dia] || 0) + monto;
-        }
+      if (status === 'CONCILIADO' && concDia) {
+        dayTotals[concDia] = (dayTotals[concDia] || 0) + monto;
       }
 
       if (status === 'PENDIENTE' || status === 'ABIERTO') {
@@ -115,7 +113,7 @@ export class DashboardEjecutivoComponent implements OnInit {
     });
 
     this.kpis.depositosHoy = depositosHoy;
-    this.kpis.montoCobrado = montoCobrado;
+    this.kpis.montoCobrado = montoHoy;
     this.kpis.concPendientes = concPendientes;
     this.kpis.ahorradoresActivos = ahorradores.size;
 
@@ -125,7 +123,7 @@ export class DashboardEjecutivoComponent implements OnInit {
 
     for (let i = 6; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
-      const key = d.toISOString().slice(0, 10);
+      const key = this.formatDateKey(d);
       const label = d.toLocaleDateString('es-MX', {
         weekday: 'short',
         day: '2-digit',
@@ -143,10 +141,10 @@ export class DashboardEjecutivoComponent implements OnInit {
       0
     );
 
-    // Conciliaciones recientes
     this.conciliacionesRecientes = abonos
+      .filter((a) => !!a.fe_conciliacion)
       .slice()
-      .sort((a, b) => (a.fe_create < b.fe_create ? 1 : -1))
+      .sort((a, b) => (a.fe_conciliacion < b.fe_conciliacion ? 1 : -1))
       .slice(0, 5);
   }
 
@@ -167,10 +165,6 @@ export class DashboardEjecutivoComponent implements OnInit {
       );
     }
 
-    if (this.kpis.depositosHoy === 0) {
-      notes.push('Aún no se han conciliado depósitos el día de hoy.');
-    }
-
     if (!notes.length) {
       notes.push('Buen trabajo, no hay pendientes críticos por ahora.');
     }
@@ -185,5 +179,47 @@ export class DashboardEjecutivoComponent implements OnInit {
     if (s === 'PENDIENTE' || s === 'ABIERTO') return 'chip-amber';
     if (s === 'RECHAZADO') return 'chip-red';
     return 'chip-gray';
+  }
+
+  // ==== Formato de fecha de conciliación ====
+  formatFeConciliacion(raw: string | null | undefined): string {
+    if (!raw) {
+      return 'Sin conciliación';
+    }
+
+    const [datePart, timePart] = raw.split(' ');
+    if (!datePart) return raw;
+
+    const [yearStr, monthStr, dayStr] = datePart.split('-');
+    const year = Number(yearStr);
+    const month = Number(monthStr);
+    const day = Number(dayStr);
+
+    const dateFormatted =
+      `${day.toString().padStart(2, '0')}/` +
+      `${month.toString().padStart(2, '0')}/` +
+      `${year.toString().padStart(4, '0')}`;
+
+    if (!timePart) {
+      return dateFormatted;
+    }
+
+    const [hhStr, mmStr] = timePart.split(':');
+    const hh = Number(hhStr);
+    const mm = Number(mmStr);
+
+    if (Number.isNaN(hh) || Number.isNaN(mm)) {
+      return dateFormatted;
+    }
+
+    let hour12 = hh % 12;
+    if (hour12 === 0) hour12 = 12;
+    const ampm = hh < 12 ? 'AM' : 'PM';
+
+    const timeFormatted =
+      `${hour12.toString().padStart(2, '0')}:` +
+      `${mm.toString().padStart(2, '0')} ${ampm}`;
+
+    return `${dateFormatted} - ${timeFormatted}`;
   }
 }
